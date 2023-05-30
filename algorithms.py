@@ -1,3 +1,5 @@
+import numpy as np
+
 # Matching Pursuit
 def matching_pursuit(s, phi, K):
     """
