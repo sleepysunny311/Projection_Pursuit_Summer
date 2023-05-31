@@ -83,7 +83,13 @@ def orthogonal_matching_pursuit(s, phi, K):
 
         # Ordinary Least Squares
         X = phi[:, indices]
-        betas = np.linalg.inv(X.T @ X) @ X.T @ s
+        
+        try:
+            betas = np.linalg.inv(X.T @ X) @ X.T @ s
+        except np.linalg.LinAlgError:
+            print("Current params:", s, phi, K)
+            print("Singular matrix, stopping the algorithm")
+            break
 
         # Save the coefficient
         coefficients = betas
