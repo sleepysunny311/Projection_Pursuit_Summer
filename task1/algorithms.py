@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.linear_model import Lasso
 
 # Matching Pursuit
 def matching_pursuit(s, phi, K):
@@ -154,4 +155,27 @@ def weak_orthogonal_matching_pursuit(s, phi, alpha):
             flag = False
     return a, indices, coefficients
 
-# Perform Weak Orthogonal Matching Pursuit
+# LASSO
+
+def sparse_LASSO(y, phi, ALPHA):
+    """
+    Perform the sparse LASSO algorithm
+
+    Args:
+    y (numpy.ndarray): Input signal
+    phi (numpy.ndarray): Dictionary
+    alpha (float): Regularization parameter
+
+    Returns:
+    a (numpy.ndarray): Sparse representation of y
+    """
+
+    lasso_signal = Lasso(alpha=ALPHA, fit_intercept=False, max_iter=10000, tol=0.0001)
+    lasso_signal.fit(phi, y)
+    lasso_coefficients = lasso_signal.coef_
+
+    lasso_residual = y - phi @ lasso_signal.coef_
+    lasso_indices = np.nonzero(lasso_coefficients)[0]
+    lasso_coefficients = lasso_coefficients[lasso_indices]
+
+    return lasso_residual, lasso_indices, lasso_coefficients 
