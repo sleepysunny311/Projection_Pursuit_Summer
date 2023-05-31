@@ -29,20 +29,22 @@ def generate_perturbed_response(y, noise_level, seed=0):
     return y_perturbed
 
 
-tested_algorithms = [matching_pursuit, orthogonal_matching_pursuit]
+tested_algorithms_list = [matching_pursuit, orthogonal_matching_pursuit]
 N = 100000
 d = 300
 
 # TODO: Change the parameters
-true_sparsity_list = [2, 5]
-noise_level_list = [0, 0.01]
-# true_sparsity_list = [2, 5, 10, 20, 100, 200, 2000]
-# noise_level_list = [0, 0.01, 0.05, 0.1]
-trial_num = 2 # number of trials
+# true_sparsity_list = [2]
+# noise_level_list = [0, 0.01]
+# trial_num = 1
 
-params = [(true_sparsity, noise_level, tested_algorithms, trial_idx, N, d) for true_sparsity in true_sparsity_list for noise_level in noise_level_list for trial_idx in range(trial_num)]
+true_sparsity_list = [2, 5, 10, 20, 50, 100]
+noise_level_list = [0, 0.01, 0.05, 0.1]
+trial_num = 10 # number of trials
 
-def run_one_trial(true_sparsity, noise_level, tested_algorithms, trial_idx, N, d):
+params = [(true_sparsity, noise_level, algorithm, trial_idx, N, d) for true_sparsity in true_sparsity_list for noise_level in noise_level_list for algorithm in tested_algorithms_list for trial_idx in range(trial_num)]
+
+def run_one_trial(true_sparsity, noise_level, algorithm, trial_idx, N, d):
     # Generate a dictionary
     dictionary = generate_gaussian_noises_dict(N, d, seed=trial_idx)
     # Generate a sparse response
@@ -51,22 +53,23 @@ def run_one_trial(true_sparsity, noise_level, tested_algorithms, trial_idx, N, d
     y_perturbed = generate_perturbed_response(y, noise_level, seed=trial_idx)
     # Run algorithms
     results = {}
-    for algorithm in tested_algorithms:
-        a, output_indices, output_coefficients = algorithm(y_perturbed, dictionary, true_sparsity)
-        results['Algorithm'] = algorithm.__name__
-        results['True sparsity'] = true_sparsity
-        results['Noise level'] = noise_level
-        results['Trial index'] = trial_idx
-        results['Real Indices'] = real_indices
-        results['Real Coefficients'] = real_coefficients
-        results['Output Indices'] = output_indices
-        results['Output Coefficients'] = output_coefficients
-    
+    a, output_indices, output_coefficients = algorithm(y_perturbed, dictionary, true_sparsity)
+    results['Algorithm'] = algorithm.__name__
+    results['True sparsity'] = true_sparsity
+    results['Noise level'] = noise_level
+    results['Trial index'] = trial_idx
+    results['Real Indices'] = [real_indices]
+    results['Real Coefficients'] = [real_coefficients]
+    results['Output Indices'] = [output_indices]
+    results['Output Coefficients'] = [output_coefficients]
     return results
 
 with ThreadPoolExecutor(max_workers=8) as executor:
     results = executor.map(run_one_trial, *zip(*params))
     
+    
 results = list(results)
 results = pd.DataFrame(results)
-results.to_csv("results.csv")
+results.to_pickle('results.pkl')
+
+print('Done!')
