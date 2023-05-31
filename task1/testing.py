@@ -28,13 +28,16 @@ def generate_perturbed_response(y, noise_level, seed=0):
     y_perturbed = y + noise
     return y_perturbed
 
+
 tested_algorithms = [matching_pursuit, orthogonal_matching_pursuit]
+N = 100000
+d = 300
+
+# TODO: Change the parameters
 true_sparsity_list = [2, 5]
 noise_level_list = [0, 0.01]
 # true_sparsity_list = [2, 5, 10, 20, 100, 200, 2000]
 # noise_level_list = [0, 0.01, 0.05, 0.1]
-N = 100000
-d = 300
 trial_num = 2 # number of trials
 
 params = [(true_sparsity, noise_level, tested_algorithms, trial_idx, N, d) for true_sparsity in true_sparsity_list for noise_level in noise_level_list for trial_idx in range(trial_num)]
@@ -58,7 +61,7 @@ def run_one_trial(true_sparsity, noise_level, tested_algorithms, trial_idx, N, d
         results['Real Coefficients'] = real_coefficients
         results['Output Indices'] = output_indices
         results['Output Coefficients'] = output_coefficients
-        
+    
     return results
 
 with ThreadPoolExecutor(max_workers=8) as executor:
