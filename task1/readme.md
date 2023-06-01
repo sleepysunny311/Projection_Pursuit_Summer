@@ -10,8 +10,8 @@ python -m venv .venv
 source .venv/bin/activate   # on Windows, run the corresponding script
 
 # alternatively, using conda
-conda create -n hw2env python=3.9 pip
-conda activate hw2env
+conda create -n venv python=3.9 pip
+conda activate venv
 ```
 
 2. Install poetry
