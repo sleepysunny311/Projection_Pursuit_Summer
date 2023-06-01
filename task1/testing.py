@@ -40,7 +40,7 @@ d = 300
 
 true_sparsity_list = [2, 5, 10, 20, 50, 100]
 noise_level_list = [0, 0.01, 0.05, 0.1]
-trial_num = 10 # number of trials
+trial_num = 20 # number of trials
 
 params = [(true_sparsity, noise_level, algorithm, trial_idx, N, d) for true_sparsity in true_sparsity_list for noise_level in noise_level_list for algorithm in tested_algorithms_list for trial_idx in range(trial_num)]
 
@@ -56,12 +56,15 @@ def run_one_trial(true_sparsity, noise_level, algorithm, trial_idx, N, d):
     a, output_indices, output_coefficients = algorithm(y_perturbed, dictionary, true_sparsity)
     results['Algorithm'] = algorithm.__name__
     results['True sparsity'] = true_sparsity
+    results['y'] = y
     results['Noise level'] = noise_level
     results['Trial index'] = trial_idx
     results['Real Indices'] = [real_indices]
     results['Real Coefficients'] = [real_coefficients]
     results['Output Indices'] = [output_indices]
     results['Output Coefficients'] = [output_coefficients]
+    results['a'] = a
+    
     return results
 
 with ThreadPoolExecutor(max_workers=8) as executor:
