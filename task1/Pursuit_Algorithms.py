@@ -86,7 +86,7 @@ def sparse_LASSO(y, phi, ALPHA):
 
 
 class BaseMatchingPursuit:
-    def __init__(self, s, phi, K, alpha=1, beta=0):
+    def __init__(self, s, phi, K, keeping_ratio=1, beta=0):
         """
         Initialize the BaseMatchingPursuit class.
 
@@ -94,7 +94,7 @@ class BaseMatchingPursuit:
             s (numpy.ndarray): Input signal.
             phi (numpy.ndarray): Dictionary.
             K (int): Number of iterations (sparsity).
-            alpha (float): Hyperparameter controlling dropping of atoms.
+            keeping_ratio (float): Ratio of atoms to keep.
             beta (float): Hyperparameter controlling random selection of atoms.
         """
         self.s = s
@@ -104,8 +104,8 @@ class BaseMatchingPursuit:
         self.r = s.copy()
         self.indices = []
         self.coefficients = []
-        self.alpha = np.min([1, alpha])
-        self.dropping_flag = (alpha < 1)
+        self.keeping_ratio = np.max([0, np.min([1, keeping_ratio])])
+        self.dropping_flag = (keeping_ratio < 1)
         self.beta = beta
         self.random_choose_flag = (beta > 0)
 
@@ -133,15 +133,15 @@ class BaseMatchingPursuit:
         self.r = self.s.copy()
         self.coefficients = []
 
-    def set_alpha(self, new_alpha):
+    def set_keeping_ratio(self, new_keeping_ratio):
         """
-        Set a new alpha value and update the dropping flag accordingly.
+        Set a new keeping ratio.
 
         Args:
-            new_alpha (float): New alpha value.
+            new_keeping_ratio (float): New keeping ratio.
         """
-        self.alpha = np.min([1, new_alpha])
-        self.dropping_flag = (new_alpha < 1)
+        self.alpha = np.max([0, np.min([1, new_keeping_ratio])])
+        self.dropping_flag = (new_keeping_ratio < 1)
 
     def run(self):
         raise NotImplementedError("Subclass must implement this method")
@@ -197,9 +197,9 @@ class MatchingPursuit(BaseMatchingPursuit):
             # Compute inner products
             inner_products = (self.phi.T @ self.r).flatten()
 
-            # Apply alpha dropping
-            dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int(self.alpha * self.phi.shape[1]), replace=False)
+            # Apply dropping
             if self.dropping_flag:
+                dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
                 inner_products[dropping_indice] = 0
 
             # Apply beta random choosing
@@ -240,9 +240,10 @@ class OrthogonalMatchingPursuit(BaseMatchingPursuit):
             # Compute inner products
             inner_products = (self.phi.T @ self.r).flatten()
 
-            # Apply alpha dropping
-            dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int(self.alpha * self.phi.shape[1]), replace=False)
+            # Apply dropping
+
             if self.dropping_flag:
+                dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
                 inner_products[dropping_indice] = 0
 
             # Apply beta random choosing
