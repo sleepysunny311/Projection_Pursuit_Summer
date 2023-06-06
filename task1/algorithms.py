@@ -185,3 +185,24 @@ def sparse_LASSO(y, phi, ALPHA):
     lasso_coefficients = lasso_coefficients[lasso_indices]
 
     return lasso_residual, lasso_indices, lasso_coefficients 
+
+
+def bootstrap_sample(y, phi, percentage):
+    '''
+    Perform the bootstrap sample algorithm
+    Args:
+    y (numpy.ndarray): Input signal
+    phi (numpy.ndarray): Dictionary
+    percentage (float): Percentage of the original signal
+    '''
+    # Get the number of samples
+    num_samples = int(percentage * y.shape[0])
+    
+    # Get the indices of the samples
+    indices = np.random.choice(y.shape[0], num_samples, replace=True)
+    
+    # Get the samples
+    y_samples = y[indices]
+    phi_samples = phi[indices]
+    
+    return y_samples, phi_samples
