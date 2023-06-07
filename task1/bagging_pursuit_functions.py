@@ -20,6 +20,17 @@ def bootstrap_sample(y, phi, sig_bagging_percent = 1):
     return y_samples, phi_samples
 
 def feature_bagging_marching_pursuit(s, phi, K, atom_bag_percent=1, select_atom_percent=0):
+
+    '''
+    Perform the bagging marching pursuit algorithm
+    Args:
+    s (numpy.ndarray): Input signal
+    phi (numpy.ndarray): Dictionary
+    K (int): Number of iterations
+    atom_bag_percent (float): Percentage of the original dictionary saved in each iteration
+    select_atom_percent (float): Percentage of the selected atoms in each atom selection
+    '''
+
     indices = []
     coefficients = []
     a = np.zeros_like(s)
@@ -59,7 +70,14 @@ def feature_bagging_marching_pursuit(s, phi, K, atom_bag_percent=1, select_atom_
     return a, c, indices, coefficients
     
     
-def bag_agg_simple(c_lst, s, phi):
+def bag_agg_simple(c_lst):
+
+    '''
+    Aggregate the coefficients from different bagging samples
+    Args:
+    c_lst (list): List of coefficients
+    '''
+
     # simple average
     c = np.mean(c_lst, axis=0)
     return c
@@ -79,6 +97,7 @@ def bag_agg_weight(c_lst, mse_lst):
 
 
 def bagging_marching_pursuit(s, phi, K, N, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0):
+
     '''
     Perform the bagging marching pursuit algorithm
     Args:
@@ -87,6 +106,7 @@ def bagging_marching_pursuit(s, phi, K, N, signal_bag_percent = 0.7, atom_bag_pe
     K (int): Number of iterations
     sig_bagging_percent (float): Percentage of the original signal
     '''
+    
     c_lst = []
     mse_lst = []
     indices_lst = []
