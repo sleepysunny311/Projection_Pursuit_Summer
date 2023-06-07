@@ -19,10 +19,10 @@ def bootstrap_sample(y, phi, sig_bagging_percent = 1):
     phi_samples = phi[indices, :]
     return y_samples, phi_samples
 
-def feature_bagging_marching_pursuit(s, phi, K, atom_bag_percent=1, select_atom_percent=0):
+def feature_bagging_matching_pursuit(s, phi, K, atom_bag_percent=1, select_atom_percent=0):
 
     '''
-    Perform the bagging marching pursuit algorithm
+    Perform the bagging matching pursuit algorithm
     Args:
     s (numpy.ndarray): Input signal
     phi (numpy.ndarray): Dictionary
@@ -96,10 +96,10 @@ def bag_agg_weight(c_lst, mse_lst):
     
 
 
-def bagging_marching_pursuit(s, phi, K, N, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0):
+def bagging_matching_pursuit(s, phi, K, N, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0):
 
     '''
-    Perform the bagging marching pursuit algorithm
+    Perform the bagging matching pursuit algorithm
     Args:
     s (numpy.ndarray): Input signal
     phi (numpy.ndarray): Dictionary
@@ -113,7 +113,7 @@ def bagging_marching_pursuit(s, phi, K, N, signal_bag_percent = 0.7, atom_bag_pe
     coefficients_lst = []
     for i in range(N):
         sub_s, sub_phi = bootstrap_sample(s, phi, signal_bag_percent)
-        a, c, indice, coefficients = feature_bagging_marching_pursuit(sub_s, sub_phi, K, atom_bag_percent, select_atom_percent)
+        a, c, indice, coefficients = feature_bagging_matching_pursuit(sub_s, sub_phi, K, atom_bag_percent, select_atom_percent)
         sub_mse = np.mean((sub_s - sub_phi @ c)**2)
         c_lst.append(c)
         mse_lst.append(sub_mse)

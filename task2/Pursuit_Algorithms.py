@@ -1,281 +1,182 @@
 import numpy as np
 from sklearn.linear_model import Lasso
 
-# Weak Orthogonal Matching Pursuit
-# TODO: Implement the Weak Orthogonal Matching Pursuit algorithm into class
-def weak_orthogonal_matching_pursuit(s, phi, alpha):
-    """
-    Perform the Weak Orthogonal Matching Pursuit algorithm
 
-    Args:
-    s (numpy.ndarray): Input signal
-    phi (numpy.ndarray): Dictionary
-    alpha (float): Threshold for stopping the algorithm
-
-    Returns:
-    a (numpy.ndarray): Sparse representation of s
-    indices (list): Indices of the selected atoms
-    coefficients (list): Coefficients of the selected atoms
-    """
-
-    # Initialize a and r
-    a = np.zeros_like(s)
-    r = s.copy()
-    indices = []
-    coefficients = []
-    flag = True
-
-    while flag:
-        # Compute inner products
-        inner_products = phi.T @ r
-
-        # Create a copy of inner_products to find out the largest inner product
-        # Though paper says OMP will not choose the same index twice, it does.
-        inner_products_copy = inner_products.copy()
-        inner_products_copy[indices] = np.min(np.abs(inner_products_copy))
-
-        # Find the index with maximum absolute correlation
-        lambda_k = np.argmax(np.abs(inner_products_copy), axis=0)
-
-        # Save the index
-        indices.append(lambda_k[0])
-
-        # Ordinary Least Squares
-        X = phi[:, indices]
-        betas = np.linalg.inv(X.T @ X) @ X.T @ s
-
-        # Save the coefficient
-        coefficients = betas
-
-        # Update a
-        a = X @ betas
-
-        # Update r
-        r = s - a
-
-        # Check if the largest inner product is greater than alpha times the largest inner product
-        largest_inner_product = np.abs(inner_products[lambda_k][0][0])
-        if largest_inner_product >= alpha * np.max(np.abs(inner_products)):
-            flag = False
-    return a, indices, coefficients
-
-# LASSO
-
-def sparse_LASSO(y, phi, ALPHA):
-    """
-    Perform the sparse LASSO algorithm
-
-    Args:
-    y (numpy.ndarray): Input signal
-    phi (numpy.ndarray): Dictionary
-    alpha (float): Regularization parameter
-
-    Returns:
-    a (numpy.ndarray): Sparse representation of y
-    """
-
-    lasso_signal = Lasso(alpha=ALPHA, fit_intercept=False, max_iter=10000, tol=0.0001)
-    lasso_signal.fit(phi, y)
-    lasso_coefficients = lasso_signal.coef_
-
-    lasso_residual = y - phi @ lasso_signal.coef_
-    lasso_indices = np.nonzero(lasso_coefficients)[0]
-    lasso_coefficients = lasso_coefficients[lasso_indices]
-
-    return lasso_residual, lasso_indices, lasso_coefficients 
+# class BaseMatchingPursuit:
+#     def __init__(self, s, phi, K, keeping_ratio=1, beta=0):
 
 
-class BaseMatchingPursuit:
-    def __init__(self, s, phi, K, keeping_ratio=1, beta=0):
-        """
-        Initialize the BaseMatchingPursuit class.
+class SignalBagging:
+    def __init__(self, N, signal_bag_percent=0.7, replace_flag=True, random_seed=0):
+        self.s = None
+        self.phi = None
+        self.N = N
+        self.replace_flag = replace_flag
+        self.random_seed = random_seed
+        self.signal_bag_percent = signal_bag_percent
+        self.s_bag = []
+        self.phi_bag = []
+        self.shuffle_flag = False
 
-        Args:
-            s (numpy.ndarray): Input signal.
-            phi (numpy.ndarray): Dictionary.
-            K (int): Number of iterations (sparsity).
-            keeping_ratio (float): Ratio of atoms to keep.
-            beta (float): Hyperparameter controlling random selection of atoms.
-        """
+    def fit(self, s, phi):
         self.s = s
         self.phi = phi
+
+        num_samples = int(self.signal_bag_percent * len(self.s))
+        np.random.seed(self.random_seed)
+        for i in range(self.N):
+            indices = np.random.choice(self.s.shape[0], num_samples, replace=self.replace_flag)
+            s_tmp = self.s[indices]
+            phi_tmp = self.phi[indices, :]
+            self.s_bag.append(s_tmp)
+            self.phi_bag.append(phi_tmp)
+        
+        self.shuffle_flag = True
+        return self.s_bag, self.phi_bag
+    
+    def change_seed(self, random_seed):
+        self.random_seed = random_seed
+        self.fit(self.s, self.phi)
+
+
+
+class AtomBaggingBase:
+    # Submodel base
+    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=0):
         self.K = K
-        self.a = np.zeros_like(s)
-        self.r = s.copy()
+        self.atom_bag_percent = np.max([0, np.min([1, atom_bag_percent])])
+        self.select_atom_percent = np.max([0, np.min([1, select_atom_percent])])
+        self.atom_bag_flag = (atom_bag_percent < 1)
+        self.atom_weak_select_flag = (select_atom_percent > 0)
+        
         self.indices = []
         self.coefficients = []
-        self.keeping_ratio = np.max([0, np.min([1, keeping_ratio])])
-        self.dropping_flag = (keeping_ratio < 1)
-        self.beta = beta
-        self.random_choose_flag = (beta > 0)
+        self.s = None
+        self.phi = None
+        self.a = None
+        self.c = None
+        self.r = None
+        
+        self.random_seed = random_seed
 
-    def set_signal(self, new_s):
-        """
-        Set a new input signal.
 
-        Args:
-            new_s (numpy.ndarray): New input signal.
-        """
-        self.s = new_s
-        self.r = new_s.copy()
-        self.a = np.zeros_like(new_s)
-        self.coefficients = []
+class AtomBaggingMatchingPursuit(AtomBaggingBase):
+    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=0):
+        super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
+    
+    def fit(self, s, phi):
+        return
 
-    def set_dictionary(self, new_phi):
-        """
-        Set a new dictionary.
+    
+class BaggingMatchingPursuit:
+    def __init__(self, N, K, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, random_seed=0):
+        self.N = N
+        self.K = K
+        self.signal_bag_percent = signal_bag_percent
+        self.atom_bag_percent = atom_bag_percent
+        self.select_atom_percent = select_atom_percent
+        self.replace_flag = replace_flag
+        self.random_seed = random_seed
+        self.SignalBagging = None
 
-        Args:
-            new_phi (numpy.ndarray): New dictionary.
-        """
-        self.phi = new_phi
-        self.a = np.zeros_like(self.s)
-        self.r = self.s.copy()
-        self.coefficients = []
-
-    def set_keeping_ratio(self, new_keeping_ratio):
-        """
-        Set a new keeping ratio.
-
-        Args:
-            new_keeping_ratio (float): New keeping ratio.
-        """
-        self.alpha = np.max([0, np.min([1, new_keeping_ratio])])
-        self.dropping_flag = (new_keeping_ratio < 1)
-
-    def run(self):
-        raise NotImplementedError("Subclass must implement this method")
-
-    def __str__(self):
-        """
-        Return a string representation of the BaseMatchingPursuit class.
-
-        Returns:
-            str: String representation of the BaseMatchingPursuit class.
-        """
-        return f"MatchingPursuit:\n\tInput signal: {self.s}\n\tDictionary: {self.phi}\n\tNumber of iterations: {self.K}\n\tAlpha: {self.alpha}\n\tBeta: {self.beta}\n\tRandom choose flag: {self.random_choose_flag}"
-
-    def get_a(self):
-        """
-        Get the sparse representation of the input signal.
-
-        Returns:
-            numpy.ndarray: Sparse representation of the input signal.
-        """
-        return self.a
-
-    def get_indices(self):
-        """
-        Get the list of indices of selected atoms.
-
-        Returns:
-            list: List of indices of selected atoms.
-        """
-        return self.indices
-
-    def get_coefficients(self):
-        """
-        Get the list of coefficients of selected atoms.
-
-        Returns:
-            list: List of coefficients of selected atoms.
-        """
-        return self.coefficients
-
-# Matching Pursuit
-class MatchingPursuit(BaseMatchingPursuit):
-    def run(self):
-        """
-        Perform the Matching Pursuit algorithm.
-
-        Returns:
-            a (numpy.ndarray): Sparse representation of s.
-            indices (list): List of indices of selected atoms.
-            coefficients (list): List of coefficients of selected atoms.
-        """
-        for _ in range(self.K):
-            # Compute inner products
-            inner_products = (self.phi.T @ self.r).flatten()
-
-            # Apply dropping
-            if self.dropping_flag:
-                dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
-                inner_products[dropping_indice] = 0
-
-            # Apply beta random choosing
-            if self.random_choose_flag:
-                num_atoms = min(int(self.beta * self.phi.shape[1]), self.phi.shape[1])
-                lambda_k = np.random.choice(np.argsort(np.abs(inner_products))[-num_atoms:])
-            else:
-                lambda_k = np.argmax(np.abs(inner_products))
-
-            # Save the index
-            self.indices.append(lambda_k)
-
-            # Save the coefficient
-            self.coefficients.append(inner_products[self.indices[-1]])
-
-            # Update a
-            self.a = self.a + (self.coefficients[-1] * self.phi[:, self.indices[-1]]).reshape(-1, 1)
-
-            # Update r
-            self.r = self.s - self.a
-
-        return self.a, self.indices, self.coefficients
+    def fit(self, s, phi):
 
 
 
-# Orthogonal Matching Pursuit
-class OrthogonalMatchingPursuit(BaseMatchingPursuit):
-    def run(self):
-        """
-        Perform the Orthogonal Matching Pursuit algorithm.
+# # Matching Pursuit
+# class MatchingPursuit(BaseMatchingPursuit):
+#     def run(self):
+#         """
+#         Perform the Matching Pursuit algorithm.
 
-        Returns:
-            a (numpy.ndarray): Sparse representation of s.
-            indices (list): Indices of the selected atoms.
-            coefficients (list): Coefficients of the selected atoms.
-        """
-        for _ in range(self.K):
-            # Compute inner products
-            inner_products = (self.phi.T @ self.r).flatten()
+#         Returns:
+#             a (numpy.ndarray): Sparse representation of s.
+#             indices (list): List of indices of selected atoms.
+#             coefficients (list): List of coefficients of selected atoms.
+#         """
+#         for _ in range(self.K):
+#             # Compute inner products
+#             inner_products = (self.phi.T @ self.r).flatten()
 
-            # Apply dropping
+#             # Apply dropping
+#             if self.dropping_flag:
+#                 dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
+#                 inner_products[dropping_indice] = 0
 
-            if self.dropping_flag:
-                dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
-                inner_products[dropping_indice] = 0
+#             # Apply beta random choosing
+#             if self.random_choose_flag:
+#                 num_atoms = min(int(self.beta * self.phi.shape[1]), self.phi.shape[1])
+#                 lambda_k = np.random.choice(np.argsort(np.abs(inner_products))[-num_atoms:])
+#             else:
+#                 lambda_k = np.argmax(np.abs(inner_products))
 
-            # Apply beta random choosing
-            if self.random_choose_flag:
-                num_atoms = min(int(self.beta * self.phi.shape[1]), self.phi.shape[1])
-                lambda_k = np.random.choice(np.argsort(np.abs(inner_products))[-num_atoms:])
-            else:
-                lambda_k = np.argmax(np.abs(inner_products))
+#             # Save the index
+#             self.indices.append(lambda_k)
+
+#             # Save the coefficient
+#             self.coefficients.append(inner_products[self.indices[-1]])
+
+#             # Update a
+#             self.a = self.a + (self.coefficients[-1] * self.phi[:, self.indices[-1]]).reshape(-1, 1)
+
+#             # Update r
+#             self.r = self.s - self.a
+
+#         return self.a, self.indices, self.coefficients
 
 
 
-            # Ordinary Least Squares
-            X = self.phi[:, self.indices+[lambda_k]]
+# # Orthogonal Matching Pursuit
+# class OrthogonalMatchingPursuit(BaseMatchingPursuit):
+#     def run(self):
+#         """
+#         Perform the Orthogonal Matching Pursuit algorithm.
 
-            try:
-                betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
-            except np.linalg.LinAlgError:
-                print("Current params:", self.K)
-                print("Singular matrix, stopping the algorithm")
-                break
+#         Returns:
+#             a (numpy.ndarray): Sparse representation of s.
+#             indices (list): Indices of the selected atoms.
+#             coefficients (list): Coefficients of the selected atoms.
+#         """
+#         for _ in range(self.K):
+#             # Compute inner products
+#             inner_products = (self.phi.T @ self.r).flatten()
 
-            # Save the index
-            self.indices.append(lambda_k)
+#             # Apply dropping
 
-            # Save the coefficient
-            self.coefficients = betas
+#             if self.dropping_flag:
+#                 dropping_indice = np.random.choice(np.arange(self.phi.shape[1]), size=int((1-self.keep_ratio) * self.phi.shape[1]), replace=False)
+#                 inner_products[dropping_indice] = 0
 
-            # Update a
-            self.a = X @ betas
+#             # Apply beta random choosing
+#             if self.random_choose_flag:
+#                 num_atoms = min(int(self.beta * self.phi.shape[1]), self.phi.shape[1])
+#                 lambda_k = np.random.choice(np.argsort(np.abs(inner_products))[-num_atoms:])
+#             else:
+#                 lambda_k = np.argmax(np.abs(inner_products))
 
-            # Update r
-            self.r = self.s - self.a
 
-        return self.a, self.indices, self.coefficients
+
+#             # Ordinary Least Squares
+#             X = self.phi[:, self.indices+[lambda_k]]
+
+#             try:
+#                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
+#             except np.linalg.LinAlgError:
+#                 print("Current params:", self.K)
+#                 print("Singular matrix, stopping the algorithm")
+#                 break
+
+#             # Save the index
+#             self.indices.append(lambda_k)
+
+#             # Save the coefficient
+#             self.coefficients = betas
+
+#             # Update a
+#             self.a = X @ betas
+
+#             # Update r
+#             self.r = self.s - self.a
+
+#         return self.a, self.indices, self.coefficients
 
