@@ -1,10 +1,7 @@
 import numpy as np
 from sklearn.linear_model import Lasso
 
-
-# class BaseMatchingPursuit:
-#     def __init__(self, s, phi, K, keeping_ratio=1, beta=0):
-
+# This file contains classes for different pursuit algorithms
 
 class SignalBagging:
     def __init__(self, N, signal_bag_percent=0.7, replace_flag=True, random_seed=0):
