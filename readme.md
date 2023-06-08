@@ -37,4 +37,9 @@ All the tests parameteres are defined in the 'Configs' folder. Just change the p
 You can also generate different testings by changing the parameters in `Configs_Generator.ipynb` and running it.
 
 
+# Projection Pursuit Week 2
+
+We finished coding for feature bagging and atom bagging and implemented them in the class. Every thing should be in "Task2/Pursuit_Algorithms.py"
+
+
 
