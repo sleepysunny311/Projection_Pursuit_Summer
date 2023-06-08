@@ -65,21 +65,103 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
     
     def fit(self, s, phi):
-        return
+        self.s = s
+        self.phi = phi
+        self.a = np.zeros_like(self.s)
+        self.c = np.zeros_like(phi.shape[1])
+        self.r = self.s.copy()
+        
+        np.random.seed(self.random_seed)
+        
+        for i in range(self.K):
+            inner_products = (phi.T @ self.r).flatten()
+            if self.atom_bag_flag:
+                dropping_indices = np.random.choice(phi.shape[1], int(phi.shape[1] * (1 - self.atom_bag_percent)), replace=False)
+                inner_products[dropping_indices] = 0
+            if self.atom_weak_select_flag:
+                top_ind = np.argsort(np,abs(inner_products))[::-1][:int(phi.shape[1] * self.select_atom_percent)]
+                # randomly select one atom
+                lambda_k = np.random.choice(top_ind)
+            else:
+                lambda_k = np.argmax(np.abs(inner_products))
+            self.indices.append(lambda_k)
+            self.coefficients.append(inner_products[lambda_k])
+            self.c[lambda_k] += inner_products[lambda_k]
+            self.a += inner_products[lambda_k] * phi[:, lambda_k].reshape(-1, 1)
+            self.r = self.s - self.a
+        return self.a, self.c
 
     
-class BaggingMatchingPursuit:
-    def __init__(self, N, K, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, random_seed=0):
+class BaggingAlgorithmBase:
+    def __init__(self, N, K, signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=0):
+
+        
         self.N = N
         self.K = K
-        self.signal_bag_percent = signal_bag_percent
+        self.signal_bag_flag = signal_bag_flag
+        if signal_bag_flag:
+            self.signal_bag_percent = signal_bag_percent
+        else:
+            self.signal_bag_percent = None
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
         self.replace_flag = replace_flag
+        self.agg_func = agg_func
         self.random_seed = random_seed
+        
+        self.s = None
+        self.phi = None
+        self.tmpPursuitModel = None
         self.SignalBagging = None
+        
+        self.c_lst = []
+        self.mse_lst = []
+        self.indices_lst = []
+        self.coefficients_lst = []
+        self.final_c = None
+        self.final_a = None
+        
+    def bag_agg_weight(c_lst, mse_lst):
+        # Calculate the weight
+        mse_lst = np.array(mse_lst)
+        weight = 1 / mse_lst
+        weight = weight / np.sum(weight)
+        
+        # Calculate the weighted average
+        tot = np.zeros_like(c_lst[0])
+        for i in range(len(c_lst)):
+            tot += c_lst[i] * weight[i]
+        return tot
 
     def fit(self, s, phi):
+        self.s = s
+        self.phi = phi
+        self.SignalBagging = SignalBagging(self.N, self.signal_bag_percent, self.replace_flag, self.random_seed)
+        self.SignalBagging.fit(self.s, self.phi)
+        self.tmpPursuitModel = AtomBaggingMatchingPursuit(self.K, self.atom_bag_percent, self.select_atom_percent, self.random_seed)
+        
+        s_bag = self.SignalBagging.s_bag
+        phi_bag = self.SignalBagging.phi_bag
+        
+        for i in range(self.N):
+            sub_s = s_bag[i]
+            sub_phi = phi_bag[i]
+            self.tmpPursuitModel.fit(sub_s, sub_phi)
+            c = self.tmpPursuitModel.c
+            self.c_lst.append(c)
+            self.mse_lst.append(np.mean((sub_s - sub_phi @ c)**2))
+            self.indices_lst.append(self.tmpPursuitModel.indices)
+            self.coefficients_lst.append(self.tmpPursuitModel.coefficients)
+        
+        self.final_c = np.mean(self.c_lst, axis=0)
+        if self.agg_func == 'weight':
+            self.final_c = self.bag_agg_weight(self.c_lst, self.mse_lst)
+        elif self.agg_func == 'simple':
+            self.final_c = np.mean(self.c_lst, axis=0)
+        else:
+            raise ValueError('agg_func must be weight or simple')
+        return self.final_c, self.final_a
+            
 
 
 
