@@ -1,0 +1,22 @@
+MODEL:
+  method: 'MP'
+  signal_bag_flag: True
+  signal_bag_percent: 0.7
+  atom_bag_percent: 0.7
+  select_atom_percent: 0
+  replace_flag: True 
+  agg_func: 'weight'
+TEST:
+  trial_num: 100
+  output_dir: output
+  N: 100000
+  d: 300
+  noise_level_list:
+  - 0
+  - 0.01
+  - 0.05
+  - 0.1
+  true_sparsity_list:
+  - 2
+  - 5
+  - 10

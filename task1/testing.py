@@ -6,7 +6,7 @@ import os
 import hydra
 from omegaconf import DictConfig
 
-from Pursuit_Algorithms import matching_pursuit, orthogonal_matching_pursuit
+from algorithms import matching_pursuit, orthogonal_matching_pursuit
 
 
 
