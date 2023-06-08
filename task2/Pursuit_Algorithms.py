@@ -202,8 +202,8 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
 
 
     
-class BaggingAlgorithmBase:
-    def __init__(self, N, K, signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=0):
+class BaggingPursuit:
+    def __init__(self, N, K, method = 'MP', signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=0):
 
         """
         Args:
@@ -234,7 +234,14 @@ class BaggingAlgorithmBase:
         
         self.s = None
         self.phi = None
-        self.tmpPursuitModel = None
+        
+        if self.method == 'MP':
+            self.tmpPursuitModel = AtomBaggingMatchingPursuit(K, atom_bag_percent, select_atom_percent, random_seed)
+        elif self.method == 'OMP':
+            self.tmpPursuitModel = AtomBaggingOrthogonalMatchingPursuit(K, atom_bag_percent, select_atom_percent, random_seed)
+        else:
+            raise ValueError('Method not supported Yet')
+        
         self.SignalBagging = None
         
         self.c_lst = []
@@ -289,7 +296,6 @@ class BaggingAlgorithmBase:
         self.phi = phi
         self.SignalBagging = SignalBagging(self.N, self.signal_bag_percent, self.replace_flag, self.random_seed)
         self.SignalBagging.fit(self.s, self.phi)
-        self.tmpPursuitModel = AtomBaggingOrthogonalMatchingPursuit(self.K, self.atom_bag_percent, self.select_atom_percent, self.random_seed)
         
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
