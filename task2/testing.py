@@ -41,6 +41,7 @@ def get_output_path(output_path, config_filename):
 
 
 def run_test(config):
+    print(config)
     return
 
 def run_one_trial():
@@ -58,9 +59,9 @@ if __name__ == '__main__':
     # Output path
     output_path = get_output_path(args.output, args.config_file)
     
-    res = run_test(config)
-    with open(output_path, 'wb') as f:
-        pkl.dump(res, f)
+    # res = run_test(config)
+    # with open(output_path, 'wb') as f:
+    #     pkl.dump(res, f)
         
     
     

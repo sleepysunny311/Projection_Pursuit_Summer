@@ -6,6 +6,7 @@ MODEL:
   select_atom_percent: 0
   replace_flag: True 
   agg_func: 'weight'
+  
 TEST:
   trial_num: 100
   output_dir: output
