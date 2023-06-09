@@ -4,7 +4,7 @@ from sklearn.linear_model import Lasso
 # This file contains classes for different pursuit algorithms
 
 class SignalBagging:
-    def __init__(self, N, signal_bag_percent=0.7, replace_flag=True, random_seed=0):
+    def __init__(self, N, signal_bag_percent=0.7, replace_flag=True, random_seed=None):
 
         """"
         This class is used to perform signal bagging
@@ -37,7 +37,8 @@ class SignalBagging:
         self.phi = phi
 
         num_samples = int(self.signal_bag_percent * len(self.s))
-        np.random.seed(self.random_seed)
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
         for i in range(self.N):
             indices = np.random.choice(self.s.shape[0], num_samples, replace=self.replace_flag)
             s_tmp = self.s[indices]
@@ -125,7 +126,8 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         self.c = np.zeros(phi.shape[1])
         self.r = self.s.copy()
         
-        np.random.seed(self.random_seed)
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
         
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
@@ -146,7 +148,7 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
 
 
 class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
-    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=0):
+    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=None):
         super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
     
     def fit(self, s, phi):
@@ -163,7 +165,8 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
         self.c = np.zeros(phi.shape[1])
         self.r = self.s.copy()
 
-        np.random.seed(self.random_seed)
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
 
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
@@ -203,7 +206,7 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
 
     
 class BaggingPursuit:
-    def __init__(self, N, K, method = 'MP', signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=0):
+    def __init__(self, N, K, method = 'MP', signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=None):
 
         """
         Args:
