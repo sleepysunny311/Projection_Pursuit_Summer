@@ -5,9 +5,14 @@ import os
 import time
 import yaml
 import pickle as pkl
-
+import itertools
+import hashlib
+import json
+import pandas as pd
+import numpy as np
 
 from data_generation import generate_gaussian_noises_dict, generate_sparse_response, generate_perturbed_response
+from Pursuit_Algorithms import *
 
 def get_parser():
     parser = argparse.ArgumentParser(description='Testing')
@@ -38,21 +43,86 @@ def get_output_path(output_path, config_filename):
     return output_path
 
 
-def run_test(config):
-    model_params = config['MODEL']
+def generate_params_combinations(config):
+    # Delete TEST.trial_num from config
+    del config['TEST']['trial_num']
+    # Convert all values to lists.
+    lists = {k: v if isinstance(v, list) else [v] for k, v in config.items()}
+    # Generate combinations.
+    keys, values = zip(*lists.items())
+    combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    return combinations
     
-    print(config)
+def testing(config, model_folder_path):
+    all_performance = []
+    
+    # Generate combinations of parameters for parameters that are lists and trial number
+    trial_num = config['TEST']['trial_num']
+    param_combinations = generate_params_combinations(config)
+    
+    for params in param_combinations:
+        tmp_performance = run_trials(params)
+        all_performance.extend(tmp_performance)
+    
+    df_results = pd.DataFrame(all_performance)
+    return df_results
+
+def generate_hash(dictionary):
+    # Convert dictionary to JSON string
+    json_str = json.dumps(dictionary, sort_keys=True)
+
+    # Generate hash from JSON string
+    hash_object = hashlib.md5(json_str.encode())
+    hash_value = hash_object.hexdigest()
+
+    return hash_value
+
+
+def run_one_trial(params, seed):
+    # TODO: Run the trial for the given parameters and seed and return all the results
+    return 
+
+def cal_performance(results):
+    # TODO: Calculate and return a dictionary of the performance
     return
 
-def run_one_trial():
+def run_trials(params, trial_num):
+    """
+    Run the trial for the given parameters for trial_num times
+    """
     
+    params_trials_performance = []
+    
+    # Create Memory folder if not exists ./memory
+    if not os.path.exists("./memory"):
+        os.makedirs("./memory")
+        
+    # Genrate a hash for the current parameters to use it as the folder name to store the results
+    params_hash = generate_hash(params)
+    params_folder_path = os.path.join("./memory", params_hash)
+        
     # Check if the trial has been done
+    if os.path.exists(params_folder_path):
+        print("This trial has been done before")
+        # TODO: Load the results from the path
+    else:
+        # Create the folder using path
+        os.makedirs(params_folder_path)
     
-    # Run the trial for the given parameters
+    # Run the trials and save the results in the folder 
+    for i in range(trial_num):
+        # Run the trial for the given parameters
+        res_one_trail_tmp = run_one_trial(params, seed = i)
+        # Save the results in the folder as a pickle file
+        with open(os.path.join(params_folder_path, "trial_" + str(i) + ".pkl"), 'wb') as f:
+            pkl.dump(res_one_trail_tmp, f)
+        # Append the performance of the current trial to the list of all trials
+        performance_tmp = cal_performance(res_one_trail_tmp)
+        params_trials_performance.append(performance_tmp)
     
-    # Dump the results to the output path
-    
-    return
+    return params_trials_performance
+
+
 
 if __name__ == '__main__':
     parser = get_parser()
@@ -63,13 +133,24 @@ if __name__ == '__main__':
     input_config = get_cfg(args.config_file)
     config = merge_cfg(default_config, input_config)
     
-    # Output path
-    output_path = get_output_path(args.output, args.config_file)
-    
-    # res = run_test(config)
-    # with open(output_path, 'wb') as f:
-    #     pkl.dump(res, f)
+    # Output folder for the current config file
+    output_dir = args.output
+    if output_dir is None:
+        # output file will be a pickle file in the outputs folder
+        output_dir = os.path.join("outputs", args.config_file.split("/")[-1].split(".")[0])
+    else:
+        # output file will be a pickle file in the specified folder
+        output_dir = os.path.join(output_dir, args.config_file.split("/")[-1].split(".")[0])
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
         
+    df_performance = testing(config, output_dir)
+    
+    with open(os.path.join(output_dir, "performance_results.pkl"), 'wb') as f:
+        pkl.dump(df_performance, f)
+        
+    print("Done!")
+    print("Results are saved in: ", output_dir)
     
     
     
