@@ -42,7 +42,6 @@ def get_output_path(output_path, config_filename):
         output_path = os.path.join(output_path, config_filename.split("/")[-1].split(".")[0] + ".pkl")
     return output_path
 
-
 def generate_params_combinations(config):
     # Delete TEST.trial_num from config
     del config['TEST']['trial_num']
@@ -118,6 +117,8 @@ def run_trials(params, trial_num):
             pkl.dump(res_one_trail_tmp, f)
         # Append the performance of the current trial to the list of all trials
         performance_tmp = cal_performance(res_one_trail_tmp)
+        
+        # ? Do we need to save the performance of each trial?
         params_trials_performance.append(performance_tmp)
     
     return params_trials_performance
