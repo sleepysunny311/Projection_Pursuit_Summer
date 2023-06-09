@@ -6,6 +6,9 @@ import time
 import yaml
 import pickle as pkl
 
+
+from data_generation import generate_gaussian_noises_dict, generate_sparse_response, generate_perturbed_response
+
 def get_parser():
     parser = argparse.ArgumentParser(description='Testing')
     parser.add_argument('--config-file', type=str, default='configs/defualt_config.yaml', metavar= "FILE" ,help='path to config file')
@@ -19,15 +22,10 @@ def get_cfg(config_file):
     return config
 
 
-def merge_cfg(default_config, input_config):
-    for key in default_config.keys():
-        if isinstance(default_config[key], dict):
-            for subkey in default_config[key].keys():
-                if subkey in input_config and input_config[subkey] is not None:
-                    default_config[key][subkey] = input_config[subkey]
-        elif key in input_config and input_config[key] is not None:
-            default_config[key] = input_config[key]
-    return default_config
+def merge_cfg(default_dict, input_dict):
+    merged_dict = default_dict.copy()  # Start with default values.
+    merged_dict.update(input_dict)  # Override with user-provided values.
+    return merged_dict
     
     
 def get_output_path(output_path, config_filename):
@@ -41,10 +39,19 @@ def get_output_path(output_path, config_filename):
 
 
 def run_test(config):
+    model_params = config['MODEL']
+    
     print(config)
     return
 
 def run_one_trial():
+    
+    # Check if the trial has been done
+    
+    # Run the trial for the given parameters
+    
+    # Dump the results to the output path
+    
     return
 
 if __name__ == '__main__':

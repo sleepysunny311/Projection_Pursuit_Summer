@@ -21,3 +21,11 @@ TEST:
   - 2
   - 5
   - 10
+
+hydra:
+  hydra_logging:
+    level: CRITICAL
+  job_logging:
+    level: CRITICAL
+  run:
+    dir: ./outputs

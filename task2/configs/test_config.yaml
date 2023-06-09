@@ -1,0 +1,29 @@
+MODEL:
+  agg_func: simple
+  atom_bag_percent: 0.7
+  method: OMP
+  signal_bag_percent: 0.9
+
+TEST:
+  N: 100000
+  d: 300
+  noise_level_list:
+  - 0
+  - 0.01
+  - 0.05
+  - 0.1
+  - 0.2
+  output_dir: output
+  trial_num: 1000
+  true_sparsity_list:
+  - 2
+  - 5
+  - 10
+  - 20
+# hydra:
+#   hydra_logging:
+#     level: CRITICAL
+#   job_logging:
+#     level: CRITICAL
+#   run:
+#     dir: ./outputs
