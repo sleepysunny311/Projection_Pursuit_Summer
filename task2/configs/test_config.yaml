@@ -7,7 +7,7 @@ MODEL:
 TEST:
   N: 100000
   d: 300
-  noise_level_list:
+  noise_level:
   - 0
   - 0.01
   - 0.05
@@ -15,7 +15,7 @@ TEST:
   - 0.2
   output_dir: output
   trial_num: 1000
-  true_sparsity_list:
+  true_sparsity:
   - 2
   - 5
   - 10

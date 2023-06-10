@@ -11,7 +11,7 @@ import json
 import pandas as pd
 import numpy as np
 
-from data_generation import generate_gaussian_noises_dict, generate_sparse_response, generate_perturbed_response
+from data_generation import GaussianDataGenerator
 from Pursuit_Algorithms import *
 
 def get_parser():
@@ -78,7 +78,26 @@ def generate_hash(dictionary):
 
 
 def run_one_trial(params, seed):
-    # TODO: Run the trial for the given parameters and seed and return all the results
+    """
+    This function uses given parameter to generate needed data
+    Match needed Algorithms and conduct research
+
+    Cases in the trials:
+    1. MP: Matching Pursuit
+    2. OMP: Orthogonal Matching Pursuit
+    3. BMP: Bagging Matching Pursuit
+    4. BOMP: Bagging Orthogonal Matching Pursuit
+    """
+    TEST_params = params["TEST"]
+    MODEL_params = params["MODEL"]
+
+
+    Data_Geneartor = GaussianDataGenerator(TEST_params["N"],TEST_params["d"], TEST_params["true_sparsity"],TEST_params["noise_level"],seed)
+    signal, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
+
+    Tmp_Model = None
+    
+
     return 
 
 def cal_performance(results):
@@ -90,6 +109,10 @@ def run_trials(params, trial_num):
     Run the trial for the given parameters for trial_num times
     """
     
+    ###TODO: We should find those hyper parameters where are lists and put everything in the pool,
+    ### This can be done with pandas
+
+
     params_trials_performance = []
     
     # Create Memory folder if not exists ./memory
@@ -140,11 +163,11 @@ if __name__ == '__main__':
         # output file will be a pickle file in the outputs folder
         output_dir = os.path.join("outputs", args.config_file.split("/")[-1].split(".")[0])
     else:
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         # output file will be a pickle file in the specified folder
         output_dir = os.path.join(output_dir, args.config_file.split("/")[-1].split(".")[0])
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-        
+
     df_performance = testing(config, output_dir)
     
     with open(os.path.join(output_dir, "performance_results.pkl"), 'wb') as f:
