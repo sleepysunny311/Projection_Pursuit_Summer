@@ -58,10 +58,10 @@ class DataGeneratorBase:
         self.generate_dictionary()
         self.generate_simulated_signal()
         self.input_noise()
-        return self.signal, self.indices, self.coefficients,self.perturbed_signal
+        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
     
     def get_current_shuffle(self):
-        return self.signal, self.indices, self.coefficients,self.perturbed_signal
+        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
 
     def retrive_data(self,path = ""):
         # TODO: retrive data from given data path so you don't have to calcaute the dictionary every goddamn time

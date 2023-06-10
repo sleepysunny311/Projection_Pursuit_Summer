@@ -52,7 +52,7 @@ def generate_params_combinations(config):
     combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
     return combinations
     
-def testing(config, model_folder_path):
+def testing_all_comb(config, model_folder_path):
     all_performance = []
     
     # Generate combinations of parameters for parameters that are lists and trial number
@@ -66,7 +66,7 @@ def testing(config, model_folder_path):
     df_results = pd.DataFrame(all_performance)
     return df_results
 
-def generate_hash(dictionary):
+def hash_encode(dictionary):
     # Convert dictionary to JSON string
     json_str = json.dumps(dictionary, sort_keys=True)
 
@@ -90,61 +90,107 @@ def run_one_trial(params, seed):
     """
     TEST_params = params["TEST"]
     MODEL_params = params["MODEL"]
-
+    
+    model_method = MODEL_params["method"]
+    bagging_sub_mum = MODEL_params["bagging_sub_num"]
+    depth = MODEL_params["depth"]
+    signal_bag_flag = MODEL_params["signal_bag_flag"]
+    signal_bag_percent = MODEL_params["signal_bag_percent"]
+    atom_bag_percent = MODEL_params["atom_bag_percent"]
+    select_atom_percent = MODEL_params["select_atom_percent"]
+    replace_flag = MODEL_params["replace_flag"]
+    agg_func = MODEL_params["agg_func"]
 
     Data_Geneartor = GaussianDataGenerator(TEST_params["N"],TEST_params["d"], TEST_params["true_sparsity"],TEST_params["noise_level"],seed)
-    signal, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
+    true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
 
-    Tmp_Model = None
+    Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, model_method, signal_bag_flag, 
+                               signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
     
+    final_a, final_c = Tmp_Model.fit(perturbed_signal, dictionary)
+    
+    res_dict = {"true_signal": true_signal, 
+                "perturbed_signal": perturbed_signal,
+                "dictionary": dictionary, 
+                "true_indices": true_indices,
+                "true_coefficients": true_coefficients,
+                "final_a": final_a,
+                "final_c": final_c,
+                "model": Tmp_Model}
+    return res_dict
 
-    return 
+def cal_performance(res_dict):
+    # Calculate MSE from res_dict
+    return np.mean((res_dict["true_signal"] - res_dict["final_a"])**2)
 
-def cal_performance(results):
-    # TODO: Calculate and return a dictionary of the performance
-    return
+def check_memory(params, trial_num):
+    if not os.path.exists("./memory"):
+        os.makedirs("./memory")
+        
+    # Genrate a hash for the current parameters to use it as the folder name to store the results
+    params_hash = hash_encode(params)
+    params_folder_path = os.path.join("./memory", params_hash)
+        
+    # Check if the trial has been done
+    if os.path.exists(params_folder_path):
+        print("This trial has been done before, loading the results...")
+        # Check how many trials have been done
+        if len(os.listdir(params_folder_path)) < trial_num:
+            print("The number of trials is less than the trial_num, running the rest of the trials...")
+            more_trial = trial_num - len(os.listdir(params_folder_path))
+        elif len(os.listdir(params_folder_path)) == trial_num:
+            print("All trials have been done, loading the results...")
+            more_trial = 0
+        else:
+            print("This trail has been done",len(os.listdir(params_folder_path)), "times, loading the results...")
+            more_trial = 0
+    else:
+        more_trial = trial_num
+    
+    return params_folder_path, more_trial
+        
+
+def load_trial_results(path):
+    mse_lst = []
+    # TODO: Load the results from the path
+    return mse_lst
 
 def run_trials(params, trial_num):
     """
     Run the trial for the given parameters for trial_num times
     """
-    
     ###TODO: We should find those hyper parameters where are lists and put everything in the pool,
+    
+    ###? Do you need to do this? We need to save all paramters in final results
+    ###? Also check generate_params_combinations(). I've already done something similar.
     ### This can be done with pandas
-
-
-    params_trials_performance = []
     
-    # Create Memory folder if not exists ./memory
-    if not os.path.exists("./memory"):
-        os.makedirs("./memory")
-        
-    # Genrate a hash for the current parameters to use it as the folder name to store the results
-    params_hash = generate_hash(params)
-    params_folder_path = os.path.join("./memory", params_hash)
-        
-    # Check if the trial has been done
-    if os.path.exists(params_folder_path):
-        print("This trial has been done before")
-        # TODO: Load the results from the path
+    param_folder_path, more_trial = check_memory(params, trial_num)
+    
+    if more_trial == 0:
+        # Load all the results from the folder_path
+        mean_mse = np.mean(load_trial_results(param_folder_path))
     else:
-        # Create the folder using path
-        os.makedirs(params_folder_path)
+        trial_done = len(os.listdir(param_folder_path))
+        # Run the rest of the trials
+        MSE_lst = load_trial_results(param_folder_path)
+        # Run the trials and save the results in the folder 
+        for i in range(trial_done, trial_num):
+            # Run the trial for the given parameters
+            res_one_trail_dict = run_one_trial(params, seed = i)
+            # Save the results in the folder as a pickle file
+            with open(os.path.join(param_folder_path, "trial_" + str(i) + ".pkl"), 'wb') as f:
+                pkl.dump(res_one_trail_dict, f)
+            # Append the performance of the current trial to the list of all trials
+            mse_tmp = cal_performance(res_one_trail_dict)
+            MSE_lst.append(mse_tmp)
+        mean_mse = np.mean(MSE_lst)
+            
+    # Combine parameters and mse performance
+    performance_dict = params.copy()
+    performance_dict["mse"] = mean_mse
     
-    # Run the trials and save the results in the folder 
-    for i in range(trial_num):
-        # Run the trial for the given parameters
-        res_one_trail_tmp = run_one_trial(params, seed = i)
-        # Save the results in the folder as a pickle file
-        with open(os.path.join(params_folder_path, "trial_" + str(i) + ".pkl"), 'wb') as f:
-            pkl.dump(res_one_trail_tmp, f)
-        # Append the performance of the current trial to the list of all trials
-        performance_tmp = cal_performance(res_one_trail_tmp)
-        
-        # ? Do we need to save the performance of each trial?
-        params_trials_performance.append(performance_tmp)
-    
-    return params_trials_performance
+    return performance_dict
 
 
 
@@ -168,7 +214,7 @@ if __name__ == '__main__':
         # output file will be a pickle file in the specified folder
         output_dir = os.path.join(output_dir, args.config_file.split("/")[-1].split(".")[0])
 
-    df_performance = testing(config, output_dir)
+    df_performance = testing_all_comb(config, output_dir)
     
     with open(os.path.join(output_dir, "performance_results.pkl"), 'wb') as f:
         pkl.dump(df_performance, f)
