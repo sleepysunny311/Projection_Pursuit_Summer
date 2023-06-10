@@ -152,7 +152,12 @@ def check_memory(params, trial_num):
 
 def load_trial_results(path):
     mse_lst = []
-    # TODO: Load the results from the path
+    # Loop through all the files in the folder
+    files = os.listdir(path)
+    for file in files:
+        with open(os.path.join(path, file), 'rb') as f:
+            res_dict = pkl.load(f)
+            mse_lst.append(cal_performance(res_dict))
     return mse_lst
 
 def run_trials(params, trial_num):
