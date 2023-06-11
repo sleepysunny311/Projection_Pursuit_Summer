@@ -224,6 +224,7 @@ class BaggingPursuit:
 
         self.N = N
         self.K = K
+        self.method = method
         self.signal_bag_flag = signal_bag_flag
         if signal_bag_flag:
             self.signal_bag_percent = signal_bag_percent

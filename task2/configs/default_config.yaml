@@ -1,8 +1,8 @@
 MODEL:
-  method: 'MP'
-  bagging_sub_mum: 20
+  method: 'BMP'
+  bagging_sub_num: 10
   # nomally depth will be 2*m(true_sparsity)
-  depth: 50
+  depth: 20
   signal_bag_flag: True
   signal_bag_percent: 0.7
   atom_bag_percent: 0.7
@@ -11,15 +11,13 @@ MODEL:
   agg_func: 'weight'
 
 TEST:
-  trial_num: 10
+  trial_num: 1
   N: 100000
   d: 300
-  true_sparsity: 25
+  true_sparsity: 2
   noise_level:
   - 0
-  - 0.01
-  - 0.05
-  - 0.1
+
 
 # hydra:
 #   hydra_logging:
