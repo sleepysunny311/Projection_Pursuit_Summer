@@ -10,6 +10,8 @@ import hashlib
 import json
 import pandas as pd
 import numpy as np
+from itertools import product
+from datetime import datetime
 
 from data_generation import GaussianDataGenerator
 from Pursuit_Algorithms import *
@@ -69,7 +71,7 @@ def generate_params_combinations(config):
     # Convert all values to lists.
     return list(expand_dict(config))
 
-def testing_all_comb(config, model_folder_path):
+def testing_all_comb(config):
     all_performance = []
     
     # Generate combinations of parameters for parameters that are lists and trial number
@@ -77,7 +79,7 @@ def testing_all_comb(config, model_folder_path):
     param_combinations = generate_params_combinations(config)
     
     for params in param_combinations:
-        tmp_performance = run_trials(params)
+        tmp_performance = run_trials(params, trial_num)
         all_performance.extend(tmp_performance)
     
     df_results = pd.DataFrame(all_performance)
@@ -92,12 +94,6 @@ def hash_encode(dictionary):
     hash_value = hash_object.hexdigest()
 
     return hash_value
-
-
-
-
-
-
 
 def run_one_trial(params, seed):
     """
@@ -116,6 +112,8 @@ def run_one_trial(params, seed):
     model_method = MODEL_params["method"]
 
     ### TODO: When we are generating yamls, we should assign none to sub_num and depth even if we are doing MP/OMP
+    ### ? Why we need to generate yaml files?
+    
     bagging_sub_mum = MODEL_params["bagging_sub_num"]
     depth = MODEL_params["depth"]
     signal_bag_flag = MODEL_params["signal_bag_flag"]
@@ -181,6 +179,8 @@ def check_memory(params, trial_num):
             more_trial = 0
     else:
         more_trial = trial_num
+        # Create the folder to store the results
+        os.mkdir(params_folder_path)
     
     return params_folder_path, more_trial
         
@@ -199,11 +199,6 @@ def run_trials(params, trial_num):
     """
     Run the trial for the given parameters for trial_num times
     """
-    ###TODO: We should find those hyper parameters where are lists and put everything in the pool,
-    
-    ###? Do you need to do this? We need to save all paramters in final results
-    ###? Also check generate_params_combinations(). I've already done something similar.
-    ### This can be done with pandas
     
     param_folder_path, more_trial = check_memory(params, trial_num)
     
@@ -253,14 +248,21 @@ if __name__ == '__main__':
             os.makedirs(output_dir)
         # output file will be a pickle file in the specified folder
         output_dir = os.path.join(output_dir, args.config_file.split("/")[-1].split(".")[0])
+        
+    # Create the output folder if it does not exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        
+    # combine "Performance" and the time stamp as the file name
+    performance_res_filename = "Performance_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".pkl"
 
-    df_performance = testing_all_comb(config, output_dir)
+    df_performance = testing_all_comb(config)
     
-    with open(os.path.join(output_dir, "performance_results.pkl"), 'wb') as f:
+    with open(os.path.join(output_dir, performance_res_filename), 'wb') as f:
         pkl.dump(df_performance, f)
         
     print("Done!")
-    print("Results are saved in: ", output_dir)
+    print("Results are saved in: ", output_dir + "/" + performance_res_filename)
     
     
     
