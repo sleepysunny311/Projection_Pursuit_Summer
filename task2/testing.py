@@ -42,16 +42,24 @@ def get_output_path(output_path, config_filename):
         output_path = os.path.join(output_path, config_filename.split("/")[-1].split(".")[0] + ".pkl")
     return output_path
 
+def expand_dict(data):
+    if isinstance(data, list):
+        for value in data:
+            yield value
+    elif isinstance(data, dict):
+        keys = data.keys()
+        values = (expand_dict(data[key]) for key in keys)
+        for combination in product(*values):
+            yield dict(zip(keys, combination))
+    else:
+        yield data
+
 def generate_params_combinations(config):
     # Delete TEST.trial_num from config
     del config['TEST']['trial_num']
     # Convert all values to lists.
-    lists = {k: v if isinstance(v, list) else [v] for k, v in config.items()}
-    # Generate combinations.
-    keys, values = zip(*lists.items())
-    combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
-    return combinations
-    
+    return list(expand_dict(config))
+
 def testing_all_comb(config, model_folder_path):
     all_performance = []
     
