@@ -80,10 +80,9 @@ def testing_all_comb(config):
     
     for params in param_combinations:
         tmp_performance = run_trials(params, trial_num)
-        all_performance.extend(tmp_performance)
-    
-    df_results = pd.DataFrame(all_performance)
-    return df_results
+        print(tmp_performance)
+        all_performance.append(tmp_performance)
+    return all_performance
 
 def hash_encode(dictionary):
     # Convert dictionary to JSON string
@@ -242,24 +241,20 @@ if __name__ == '__main__':
     output_dir = args.output
     if output_dir is None:
         # output file will be a pickle file in the outputs folder
-        output_dir = os.path.join("outputs", args.config_file.split("/")[-1].split(".")[0])
-    else:
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        # output file will be a pickle file in the specified folder
-        output_dir = os.path.join(output_dir, args.config_file.split("/")[-1].split(".")[0])
+        output_dir = "outputs"
         
     # Create the output folder if it does not exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         
-    # combine "Performance" and the time stamp as the file name
-    performance_res_filename = "Performance_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".pkl"
-
-    df_performance = testing_all_comb(config)
+    # ! The result is a list of dictionaries
+    performance_res = testing_all_comb(config)
+    
+    # file name being the config file name
+    performance_res_filename = args.config_file.split("/")[-1].split(".")[0] + ".pkl"
     
     with open(os.path.join(output_dir, performance_res_filename), 'wb') as f:
-        pkl.dump(df_performance, f)
+        pkl.dump(performance_res, f)
         
     print("Done!")
     print("Results are saved in: ", output_dir + "/" + performance_res_filename)
