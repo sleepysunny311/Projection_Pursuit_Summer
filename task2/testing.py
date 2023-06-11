@@ -10,6 +10,7 @@ import hashlib
 import json
 import pandas as pd
 import numpy as np
+from itertools import product
 
 from data_generation import GaussianDataGenerator
 from Pursuit_Algorithms import *
