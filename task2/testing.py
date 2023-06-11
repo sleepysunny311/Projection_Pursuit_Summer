@@ -55,6 +55,15 @@ def expand_dict(data):
         yield data
 
 def generate_params_combinations(config):
+    """
+    This function takes in a config dictionary and generate all possible combinations of parameters
+
+    Args:
+        config (dict): A dictionary of parameters
+    
+    Returns:
+        param_combinations (list): A list of dictionaries of parameters
+    """
     # Delete TEST.trial_num from config
     del config['TEST']['trial_num']
     # Convert all values to lists.
@@ -85,6 +94,11 @@ def hash_encode(dictionary):
     return hash_value
 
 
+
+
+
+
+
 def run_one_trial(params, seed):
     """
     This function uses given parameter to generate needed data
@@ -100,6 +114,8 @@ def run_one_trial(params, seed):
     MODEL_params = params["MODEL"]
     
     model_method = MODEL_params["method"]
+
+    ### TODO: When we are generating yamls, we should assign none to sub_num and depth even if we are doing MP/OMP
     bagging_sub_mum = MODEL_params["bagging_sub_num"]
     depth = MODEL_params["depth"]
     signal_bag_flag = MODEL_params["signal_bag_flag"]
@@ -109,12 +125,23 @@ def run_one_trial(params, seed):
     replace_flag = MODEL_params["replace_flag"]
     agg_func = MODEL_params["agg_func"]
 
+
     Data_Geneartor = GaussianDataGenerator(TEST_params["N"],TEST_params["d"], TEST_params["true_sparsity"],TEST_params["noise_level"],seed)
     true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
-
-    Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, model_method, signal_bag_flag, 
-                               signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
-    
+    Tmp_Model = None
+    match model_method:
+        case "MP":
+            Tmp_Model = AtomBaggingMatchingPursuit(depth, atom_bag_percent, select_atom_percent, seed)
+        case "OMP":
+            Tmp_Model = AtomBaggingOrthogonalMatchingPursuit(depth, atom_bag_percent, select_atom_percent, seed)
+        case "BMP":
+            Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, "MP", signal_bag_flag, 
+                                            signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
+        case "BOMP":
+            Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, "OMP", signal_bag_flag,
+                                                signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
+        case _:
+            raise ValueError(f"Model method {model_method} is not supported")
     final_a, final_c = Tmp_Model.fit(perturbed_signal, dictionary)
     
     res_dict = {"true_signal": true_signal, 
