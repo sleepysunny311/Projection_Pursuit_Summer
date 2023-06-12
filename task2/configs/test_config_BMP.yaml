@@ -1,0 +1,20 @@
+MODEL:
+  method: 'BMP'
+  # nomally depth will be 2*m(true_sparsity)
+  depth: 100
+
+TEST:
+  trial_num: 50
+  true_sparsity: 50
+  noise_level:
+  - 0
+  - 0.1
+  - 0.2
+
+# hydra:
+#   hydra_logging:
+#     level: CRITICAL
+#   job_logging:
+#     level: CRITICAL
+#   run:
+#     dir: ./outputs
