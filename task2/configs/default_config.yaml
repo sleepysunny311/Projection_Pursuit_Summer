@@ -1,6 +1,6 @@
 MODEL:
-  method: 'BMP'
-  bagging_sub_num: 10
+  method: 'MP'
+  bagging_sub_num: 1
   # nomally depth will be 2*m(true_sparsity)
   depth: 20
   signal_bag_flag: True
@@ -14,7 +14,7 @@ TEST:
   trial_num: 1
   N: 100000
   d: 300
-  true_sparsity: 2
+  true_sparsity: 20
   noise_level:
   - 0
 

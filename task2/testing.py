@@ -102,8 +102,8 @@ def run_one_trial(params, seed):
     Cases in the trials:
     1. MP: Matching Pursuit
     2. OMP: Orthogonal Matching Pursuit
-    3. BMP: Bagging Matching Pursuit
-    4. BOMP: Bagging Orthogonal Matching Pursuit
+
+    If sub_model_num  is 1, then the model will be reduced back to MP/OMP.
     """
     TEST_params = params["TEST"]
     MODEL_params = params["MODEL"]
@@ -128,13 +128,9 @@ def run_one_trial(params, seed):
     Tmp_Model = None
     match model_method:
         case "MP":
-            Tmp_Model = AtomBaggingMatchingPursuit(depth, atom_bag_percent, select_atom_percent, seed)
-        case "OMP":
-            Tmp_Model = AtomBaggingOrthogonalMatchingPursuit(depth, atom_bag_percent, select_atom_percent, seed)
-        case "BMP":
             Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, "MP", signal_bag_flag, 
                                             signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
-        case "BOMP":
+        case "OMP":
             Tmp_Model = BaggingPursuit(bagging_sub_mum, depth, "OMP", signal_bag_flag,
                                                 signal_bag_percent, atom_bag_percent, select_atom_percent, replace_flag, agg_func, seed)
         case _:
@@ -156,9 +152,9 @@ def cal_performance(res_dict):
     return np.mean((res_dict["true_signal"] - res_dict["final_a"])**2)
 
 def check_memory(params, trial_num):
+    #Check if the memory folder exists
     if not os.path.exists("./memory"):
         os.makedirs("./memory")
-        
     # Genrate a hash for the current parameters to use it as the folder name to store the results
     params_hash = hash_encode(params)
     params_folder_path = os.path.join("./memory", params_hash)
