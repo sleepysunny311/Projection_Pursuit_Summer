@@ -1,7 +1,7 @@
 import numpy as np
 
 class OMP:
-    def __init__(self, K, select_atom_percent = 0, random_seed=None):
+    def __init__(self, K, select_atom_percent = 0, random_seed=None, ignore_warning=False):
         self.K = K
         self.random_seed = random_seed
         self.select_atom_percent = select_atom_percent
@@ -10,6 +10,7 @@ class OMP:
         
         self.indices = []
         self.coefficients = []
+        self.ignore_warning = ignore_warning
     
     def fit(self, s, phi):
 
@@ -45,7 +46,8 @@ class OMP:
             try:
                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
             except:
-                print('Singular matrix encountered in OMP')
+                if not self.ignore_warning:
+                    print('Singular matrix encountered in OMP')
                 break
             #Update indices
             self.indices.append(lambda_k)
