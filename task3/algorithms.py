@@ -1,9 +1,15 @@
 import numpy as np
 
 class OMP:
-    def __init__(self, K, random_seed=None):
+    def __init__(self, K, select_atom_percent = 0, random_seed=None):
         self.K = K
         self.random_seed = random_seed
+        self.select_atom_percent = select_atom_percent
+        if select_atom_percent == 0:
+            self.atom_weak_select_flag = False
+        
+        self.indices = []
+        self.coefficients = []
     
     def fit(self, s, phi):
 
@@ -24,9 +30,6 @@ class OMP:
 
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
-            if self.atom_bag_flag:
-                dropping_indices = np.random.choice(phi.shape[1], int(phi.shape[1] * (1 - self.atom_bag_percent)), replace=False)
-                inner_products[dropping_indices] = 0
             if self.atom_weak_select_flag:
                 top_ind = np.argsort(np.abs(inner_products))[::-1][:int(phi.shape[1] * self.select_atom_percent)]
                 # randomly select one atom
