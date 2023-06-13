@@ -170,6 +170,7 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
 
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
+            inner_products[self.indices] = 0
             if self.atom_bag_flag:
                 dropping_indices = np.random.choice(phi.shape[1], int(phi.shape[1] * (1 - self.atom_bag_percent)), replace=False)
                 inner_products[dropping_indices] = 0
@@ -185,7 +186,6 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
             X = phi[:, self.indices+[lambda_k]]
 
 
-            ### TODO: 1. Dump Chosen Index 2. Weakly OMP
             try:
                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
             except:

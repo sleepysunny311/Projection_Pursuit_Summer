@@ -31,6 +31,8 @@ class OMP:
 
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
+            #so that we will not select the same atom
+            inner_products[self.indices] = 0
             if self.atom_weak_select_flag:
                 top_ind = np.argsort(np.abs(inner_products))[::-1][:int(phi.shape[1] * self.select_atom_percent)]
                 # randomly select one atom
@@ -42,13 +44,14 @@ class OMP:
             #Ordinary least squares
             X = phi[:, self.indices+[lambda_k]]
 
-            ### TODO: 1. Dump Chosen Index 2. Weakly OMP
+            ### TODO: 1. Dump Chosen Index
             try:
                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
             except:
                 if not self.ignore_warning:
                     print('Singular matrix encountered in OMP')
                 break
+
             #Update indices
             self.indices.append(lambda_k)
 
