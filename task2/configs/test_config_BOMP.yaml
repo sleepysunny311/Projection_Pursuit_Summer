@@ -1,5 +1,5 @@
 MODEL:
-  method: 'BOMP'
+  method: 'OMP'
   # nomally depth will be 2*m(true_sparsity)
   depth: 100
 

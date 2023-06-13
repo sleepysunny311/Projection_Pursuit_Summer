@@ -1,7 +1,8 @@
 MODEL:
-  method: 'BMP'
+  method: 'MP'
   # nomally depth will be 2*m(true_sparsity)
   depth: 100
+
 
 TEST:
   trial_num: 50

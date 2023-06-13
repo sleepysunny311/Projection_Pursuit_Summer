@@ -4,7 +4,8 @@ MODEL:
   depth: 100
   signal_bag_flag: False
   atom_bag_percent: 1
-  replace_flag: False 
+  replace_flag: False
+  bagging_sub_num:1
 
 TEST:
   trial_num: 50
