@@ -26,6 +26,8 @@ def generate_perturbed_response(y, noise_level, seed=0):
 def generate_perturbed_responses(y, noise_levels, seed=0):
     return [generate_perturbed_response(y, noise_level, seed) for noise_level in noise_levels]
 
+
+
 class DataGeneratorBase:
 
     # Sub Data Generator Base
@@ -42,7 +44,8 @@ class DataGeneratorBase:
         self.indices = None
         self.coefficients = None
         self.perturbed_signal = None
-
+        self.coherence_list = None
+        self.coherence = None
     def generate_dictionary(self):
         return None
     
@@ -67,6 +70,17 @@ class DataGeneratorBase:
         # TODO: retrive data from given data path so you don't have to calcaute the dictionary every goddamn time
         pass
     
+    def measure_coherence(self):
+
+        """
+        Measure coherence of the dictionary
+        """
+        temp_coherence =  (self.dictionary).T @ (self.dictionary)
+        self.coherence_list = np.abs(temp_coherence[np.triu_indices(temp_coherence.shape[0], 1)])
+        self.coherence = np.max(self.coherence_list)
+        return self.coherence
+
+
 class GaussianDataGenerator(DataGeneratorBase):
     def __init__(self, dictionary_length, dictionary_dimensions, indice_number, noise_level, random_seed):
         super().__init__(dictionary_length, dictionary_dimensions, indice_number, noise_level, random_seed)
