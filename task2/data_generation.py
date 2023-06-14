@@ -83,5 +83,9 @@ class GaussianDataGenerator(DataGeneratorBase):
     def input_noise(self):
         np.random.seed(self.random_seed)
         norm_y = np.linalg.norm(self.signal)
-        noise = np.random.normal(size=self.signal.shape, scale=norm_y * self.noise_level)
+        #y' = y/norm beta' = beta/norm
+        #so noise_level is the noise level of y'
+        self.signal = self.signal/norm_y
+        self.coefficients = self.coefficients/norm_y
+        noise = np.random.normal(size=self.signal.shape, scale= self.noise_level)
         self.perturbed_signal = self.signal + noise
