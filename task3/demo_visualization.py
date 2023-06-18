@@ -46,14 +46,14 @@ def makeplots(res_log, savefig = True):
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
     ax.get_legend().set_title("Noise std")
-    plt.ylim([0, 0.5])
+
     
     plt.xlabel("Iteration number")
     plt.ylabel("CV prediction error")
     plt.title("CV prediction error for each noise level with m = " + str(parameters['m']) + " and d = " + str(parameters['d']))
     if savefig:
         plt.savefig('./images/' + imgfolderPath + '/cv_error.png', dpi=200, bbox_inches='tight')
-    #plt.show()
+    plt.show()
 
     ## Second plot: Noise std vs. best iteration number
     plt.plot(noise_level_lst, noise_level_best_K)
@@ -62,7 +62,7 @@ def makeplots(res_log, savefig = True):
     plt.ylabel("Best iteration number")
     if savefig:
         plt.savefig('./images/' + imgfolderPath + '/noise_vs_bestK.png', dpi=200, bbox_inches='tight')
-    #plt.show()
+    plt.show()
     
     ## Third plot: Noise std vs. CV prediction error for best iteration number
     plt.plot(noise_level_lst, noise_level_lowest_MSE)
@@ -71,7 +71,7 @@ def makeplots(res_log, savefig = True):
     plt.title("CV prediction error for best iteration number for each noise level with m = " + str(parameters['m']) + " and d = " + str(parameters['d']))
     if savefig:
         plt.savefig('./images/' + imgfolderPath + '/noise_vs_bestMSE.png', dpi=200, bbox_inches='tight')
-    #plt.show()
+    plt.show()
 
 # Extracing All information
 pkl_files = glob.glob("memory/*.pkl")

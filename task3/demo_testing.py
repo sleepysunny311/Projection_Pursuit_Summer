@@ -90,11 +90,11 @@ def cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, K_lst, t
 N = 1000
 # d = 1200
 # m = 20
-noise_level_lst = [0, 0.01, 0.05, 0.1, 0.2, 0.3,0.4,0.5]
+noise_level_lst = [0, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
 trial_num = 10
 
 cv_num = 10
-# ? Is cv necessary? 
+
 
 
 m_list = [20,40]
