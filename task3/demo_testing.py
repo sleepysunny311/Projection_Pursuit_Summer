@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import pickle as pkl
 import os
+from itertools import product
+
 from algorithms import OMP
 from data_generation import GaussianDataGenerator
 
@@ -86,12 +88,16 @@ def cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, K_lst, t
 
 
 N = 1000
-d = 1200
-m = 20
+# d = 1200
+# m = 20
 noise_level_lst = [0, 0.01, 0.05, 0.1, 0.2, 0.3]
-trial_num = 5
+trial_num = 10
 
 cv_num = 5
 # ? Is cv necessary? 
 
-noise_level_best_K, noise_level_lowest_MSE, res_log = cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, np.arange(1, 41, 1), trial_num, output_filename = None)
+
+m_list = [20,40]
+d_list = [1200,1500]
+for m,d in product(m_list,d_list):
+    noise_level_best_K, noise_level_lowest_MSE, res_log = cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, np.arange(1, 41, 1), trial_num, output_filename = None)
