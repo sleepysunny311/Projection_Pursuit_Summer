@@ -93,7 +93,7 @@ N = 1000
 noise_level_lst = [0, 0.01, 0.05, 0.1, 0.2, 0.3]
 trial_num = 10
 
-cv_num = 5
+cv_num = 10
 # ? Is cv necessary? 
 
 
