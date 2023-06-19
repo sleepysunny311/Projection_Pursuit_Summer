@@ -100,4 +100,4 @@ cv_num = 10
 m_list = [20,40]
 d_list = [1200,1500]
 for m,d in product(m_list,d_list):
-    noise_level_best_K, noise_level_lowest_MSE, res_log = cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, np.arange(1, 41, 1), trial_num, output_filename = None)
+    noise_level_best_K, noise_level_lowest_MSE, res_log = cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, np.arange(1, 2*m+1, 1), trial_num, output_filename = None)
