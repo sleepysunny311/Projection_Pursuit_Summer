@@ -72,7 +72,6 @@ class DataGeneratorBase:
         pass
     
     def measure_coherence(self):
-
         """
         Measure coherence of the dictionary
         """
@@ -80,6 +79,12 @@ class DataGeneratorBase:
         self.coherence_list = np.abs(temp_coherence[np.triu_indices(temp_coherence.shape[0], 1)])
         self.coherence = np.max(self.coherence_list)
         return self.coherence
+    
+    def update_noise_level(self, new_noise_level):
+        self.noise_level = new_noise_level
+        self.input_noise()
+        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
+
 
 
 class GaussianDataGenerator(DataGeneratorBase):
