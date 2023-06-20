@@ -30,7 +30,7 @@ def generate_perturbed_responses(y, noise_levels, seed=0):
 
 class DataGeneratorBase:
     # Sub Data Generator Base
-    def __init__(self,dictionary_length, dictionary_dimensions, indice_number, noise_level,random_seed, data_path = ""):
+    def __init__(self,dictionary_length, dictionary_dimensions, indice_number, noise_level, random_seed, data_path = ""):
         self.dictionary_length = dictionary_length
         self.dictionary_dimensions = dictionary_dimensions
         self.indice_number = indice_number
@@ -81,8 +81,8 @@ class DataGeneratorBase:
 
 
 class GaussianDataGenerator(DataGeneratorBase):
-    def __init__(self, dictionary_length, dictionary_dimensions, indice_number, random_seed):
-        super().__init__(dictionary_length, dictionary_dimensions, indice_number, random_seed)
+    def __init__(self, dictionary_length, dictionary_dimensions, indice_number, noise_level, random_seed):
+        super().__init__(dictionary_length, dictionary_dimensions, indice_number, noise_level, random_seed)
     def generate_dictionary(self):
         np.random.seed(self.random_seed)
         gaussian_noises = np.random.normal(size = (self.dictionary_dimensions,self.dictionary_length))
