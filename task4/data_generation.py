@@ -29,14 +29,12 @@ def generate_perturbed_responses(y, noise_levels, seed=0):
 
 
 class DataGeneratorBase:
-
     # Sub Data Generator Base
-
-    def __init__(self,dictionary_length, dictionary_dimensions, indice_number, random_seed,data_path = ""):
+    def __init__(self,dictionary_length, dictionary_dimensions, indice_number, noise_level,random_seed, data_path = ""):
         self.dictionary_length = dictionary_length
         self.dictionary_dimensions = dictionary_dimensions
         self.indice_number = indice_number
-        self.noise_level = None
+        self.noise_level = noise_level
         self.random_seed = random_seed
 
         self.dictionary = None
@@ -46,6 +44,7 @@ class DataGeneratorBase:
         self.perturbed_signal = None
         self.coherence_list = None
         self.coherence = None
+        
     def generate_dictionary(self):
         return None
     
@@ -56,21 +55,12 @@ class DataGeneratorBase:
         return None
     
     def shuffle(self):
-        """
-        This function is used to shuffle the data and generate the true signal
-
-        Returns:
-            signal: the signal
-            dictionary: the dictionary
-            indices: the indices
-            coefficients: the coefficients
-        """
-
         np.random.seed(self.random_seed)
         self.random_seed = np.random.randint(100000000)
         self.generate_dictionary()
         self.generate_simulated_signal()
-        return self.signal, self.dictionary, self.indices, self.coefficients
+        self.input_noise()
+        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
     
     def get_current_shuffle(self):
         return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
@@ -88,23 +78,6 @@ class DataGeneratorBase:
         self.coherence_list = np.abs(temp_coherence[np.triu_indices(temp_coherence.shape[0], 1)])
         self.coherence = np.max(self.coherence_list)
         return self.coherence
-
-    def update_noise_level(self,new_noise_level):
-        """
-        This function is used to change the noise_level and change the noise only
-
-        Returns:
-            signal: the signal
-            dictionary: the dictionary
-            indices: the indices
-            coefficients: the coefficients
-            perturbed_signal: the perturbed signal
-        """
-
-        self.noise_level = new_noise_level
-        self.input_noise()
-        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
-
 
 
 class GaussianDataGenerator(DataGeneratorBase):

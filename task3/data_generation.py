@@ -46,6 +46,7 @@ class DataGeneratorBase:
         self.perturbed_signal = None
         self.coherence_list = None
         self.coherence = None
+        
     def generate_dictionary(self):
         return None
     
