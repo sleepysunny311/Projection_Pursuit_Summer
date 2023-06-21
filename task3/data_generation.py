@@ -83,7 +83,7 @@ class DataGeneratorBase:
     def update_noise_level(self, new_noise_level):
         self.noise_level = new_noise_level
         self.input_noise()
-        return self.signal, self.dictionary, self.indices, self.coefficients,self.perturbed_signal
+        return self.perturbed_signal
 
 
 
