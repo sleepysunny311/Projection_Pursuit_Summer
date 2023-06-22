@@ -78,6 +78,23 @@ class DataGeneratorBase:
         self.coherence_list = np.abs(temp_coherence[np.triu_indices(temp_coherence.shape[0], 1)])
         self.coherence = np.max(self.coherence_list)
         return self.coherence
+    
+    def update_noise_level(self,new_noise_level):
+        """
+        This function is used to change the noise_level and change the noise only
+
+        Returns:
+            signal: the signal
+            dictionary: the dictionary
+            indices: the indices
+            coefficients: the coefficients
+            perturbed_signal: the perturbed signal
+        """
+
+        self.noise_level = new_noise_level
+        self.input_noise()
+        return self.perturbed_signal
+
 
 
 class GaussianDataGenerator(DataGeneratorBase):

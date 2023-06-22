@@ -98,7 +98,7 @@ class CrossValidator:
             self.K_cv_error.append(self.cal_cv_error(current_K_algorithm))
         
         self.lowest_error = np.min(self.K_cv_error)
-        self.lowest_error_K = self.K_lst[np.argmin(self.K_cv_error)]
+        self.lowest_error_K = self.K_lst[int(np.argmin(self.K_cv_error))]
         return self.lowest_error, self.lowest_error_K, self.K_cv_error
 
 
