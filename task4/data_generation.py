@@ -37,6 +37,7 @@ class DataGeneratorBase:
         self.noise_level = noise_level
         self.random_seed = random_seed
 
+
         self.dictionary = None
         self.signal = None
         self.indices = None
@@ -44,7 +45,8 @@ class DataGeneratorBase:
         self.perturbed_signal = None
         self.coherence_list = None
         self.coherence = None
-        
+        self.noise_norm = None
+
     def generate_dictionary(self):
         return None
     
@@ -95,6 +97,8 @@ class DataGeneratorBase:
         self.input_noise()
         return self.perturbed_signal
 
+    def return_noise_norm(self):
+        return self.noise_norm
 
 
 class GaussianDataGenerator(DataGeneratorBase):
@@ -118,4 +122,5 @@ class GaussianDataGenerator(DataGeneratorBase):
         # self.signal = self.signal/norm_y
         #self.coefficients = self.coefficients/norm_y
         noise = np.random.normal(size=self.signal.shape, scale= self.noise_level*norm_beta)
+        self.noise_norm = np.linalg.norm(noise)
         self.perturbed_signal = self.signal + noise
