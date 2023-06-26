@@ -3,6 +3,7 @@
 
 # Memory files
 **/memory/
+**/memory_sty/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
