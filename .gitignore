@@ -4,6 +4,7 @@
 # Memory files
 **/memory/
 **/memory_sty/
+**/memory_lasso/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
