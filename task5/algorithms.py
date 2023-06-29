@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.linear_model import Lasso
 
 class OMP:
     def __init__(self, K, select_atom_percent = 0, random_seed=None, ignore_warning=False):
@@ -71,9 +72,7 @@ class OMP:
         pred_mse = np.mean((s_pred - s_test)**2)
         return pred_mse
     
-    
-import numpy as np
-from sklearn.linear_model import Lasso
+
 
 # This file contains classes for different pursuit algorithms
 
