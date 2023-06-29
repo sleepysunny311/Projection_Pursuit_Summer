@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn.linear_model import Lasso
 
 class OMP:
     def __init__(self, K, select_atom_percent = 0, random_seed=None, ignore_warning=False):
