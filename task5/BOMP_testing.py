@@ -94,9 +94,14 @@ def get_model_params(config):
     param_grid['K'] = K_list
     return fixed_params, param_grid
     
-def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model, param_grid, cv_num, trial_num):
+def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
+    # get the model
+    if model_name == "BOMP":
+        from algorithms import BOMP
+        model = BOMP(**fixed_params)
+    
     res_log_npm = {
-        'parameters': {'n': n, 'p': p, 'm': m, 'noise_level_lst': noise_level_lst, 'model': model.__name__, 'cv_num': cv_num, 'trial_num': trial_num, 'param_grid': param_grid},
+        'parameters': {'n': n, 'p': p, 'm': m, 'noise_level_lst': noise_level_lst, 'model_name': model_name, 'cv_num': cv_num, 'trial_num': trial_num, 'param_grid': param_grid, 'fixed_params': fixed_params},
         'noise_level_lowest_MSE': [],
         'log': []
     }
@@ -125,7 +130,7 @@ def run_tests(config):
     n_tmp = config['TEST']['n']
     p_tmp = config['TEST']['p']
     m_tmp = config['TEST']['m']
-    noise_level_lst_tmp = config['TEST']['noise_level']
+    noise_level_lst = config['TEST']['noise_level']
     model_name = config['TEST']['model']
     cv_num = config['TEST']['cv_num']
     trial_num = config['TEST']['trial_num']
@@ -140,22 +145,17 @@ def run_tests(config):
     
     npm_lst = list(product(n_tmp, p_tmp, m_tmp))
     
-    if not isinstance(noise_level_lst_tmp, list):
-        noise_level_lst_tmp = [noise_level_lst_tmp]
+    if not isinstance(noise_level_lst, list):
+        noise_level_lst = [noise_level_lst]
     
     # Get model parameters
     fixed_params, param_grid = get_model_params(config)
     
-    # get the model
-    if model_name == "BOMP":
-        from algorithms import BOMP
-        model = BOMP(**fixed_params)
-        
     # Start running the tests
     ALL_LOGS = []
     
     for n, p, m in npm_lst:
-        reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst_tmp, model, param_grid, cv_num, trial_num)
+        reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num)
         ALL_LOGS.append(reslog_npm)
         
     return ALL_LOGS
