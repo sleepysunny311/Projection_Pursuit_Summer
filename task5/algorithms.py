@@ -437,3 +437,124 @@ class BaggingPursuit:
         pred_mse = np.mean((s_pred - s_test)**2)
         return pred_mse
         
+        
+class BOMP:
+    def __init__(self, N_bag=10, K=10, signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=None, ignore_warning=False):
+        """
+        Args:
+        N (int): Number of submodels
+        K (int): Number of iterations
+        signal_bag_flag (bool): Whether to perform signal bagging
+        signal_bag_percent (float): Percentage of the original signal
+        atom_bag_percent (float): Percentage of the original dictionary
+        select_atom_percent (float): Percentage of the selected atoms
+        replace_flag (bool): Whether to replace the samples
+        agg_func (str): Aggregation function
+        random_seed (int): Random seed
+        """
+        self.N_bag = N_bag
+        self.K = K
+        self.signal_bag_flag = signal_bag_flag
+        if signal_bag_flag:
+            self.signal_bag_percent = signal_bag_percent
+        else:
+            self.signal_bag_percent = None
+        self.atom_bag_percent = atom_bag_percent
+        self.select_atom_percent = select_atom_percent
+        self.replace_flag = replace_flag
+        self.agg_func = agg_func
+        self.random_seed = random_seed
+        self.ignore_warning = ignore_warning
+        self.s = None
+        self.phi = None
+        self.tmpPursuitModel = AtomBaggingOrthogonalMatchingPursuit(K, atom_bag_percent, select_atom_percent, random_seed, ignore_warning)
+        self.SignalBagging = None
+        self.c_lst = []
+        self.mse_lst = []
+        self.indices_lst = []
+        self.coefficients_lst = []
+        self.final_c = None
+        self.final_a = None
+        
+    def agg_weight_with_error(self,c_lst, mse_lst):
+
+        """
+        This function is used to aggregate the coefficients with the inverse of the mean squared error
+
+        Args:
+        c_lst (list): List of coefficients
+        mse_lst (list): List of mean squared errors
+        """
+        # Calculate the weight
+        mse_lst = np.array(mse_lst)
+        weight = 1 / mse_lst
+        weight = weight / np.sum(weight)
+        
+        # Calculate the weighted average
+        tot = np.zeros_like(c_lst[0])
+        for i in range(len(c_lst)):
+            tot += c_lst[i] * weight[i]
+        return tot
+
+    def agg_weight_with_avg(self,c_lst):
+
+        """
+        This function is used to aggregate the coefficients with the inverse of the mean squared error
+
+        Args:
+        c_lst (list): List of coefficients
+        """
+        # Calculate the weighted average
+        tot = np.zeros_like(c_lst[0])
+        for i in range(len(c_lst)):
+            tot += c_lst[i]
+        return tot / len(c_lst)
+    
+    def reset(self):
+        self.SignalBagging = None
+        self.c_lst = []
+        self.mse_lst = []
+        self.indices_lst = []
+        self.coefficients_lst = []
+        self.final_c = None
+        self.final_a = None
+
+    def fit(self, s, phi):
+
+        """
+        Args:
+        s (numpy.ndarray): Input signal
+        phi (numpy.ndarray): Dictionary
+        """
+        self.reset()
+        
+        self.s = s
+        self.phi = phi
+        self.SignalBagging = SignalBagging(self.N_bag, self.signal_bag_percent, self.replace_flag, self.random_seed)
+        self.SignalBagging.fit(self.s, self.phi)
+        
+        s_bag = self.SignalBagging.s_bag
+        phi_bag = self.SignalBagging.phi_bag
+        
+        for i in range(self.N_bag):
+            sub_s = s_bag[i]
+            sub_phi = phi_bag[i]
+            self.tmpPursuitModel.fit(sub_s, sub_phi)
+            c = self.tmpPursuitModel.c
+            self.c_lst.append(c)
+            self.mse_lst.append(np.mean((sub_s - sub_phi @ c)**2))
+            self.indices_lst.append(self.tmpPursuitModel.indices)
+            self.coefficients_lst.append(self.tmpPursuitModel.c)
+        
+        if self.agg_func == 'weight':
+            self.final_c = self.agg_weight_with_error(self.c_lst, self.mse_lst)
+        else:
+            self.final_c = self.agg_weight_with_avg(self.c_lst)
+        self.final_a = self.phi @ self.final_c
+        # return self.final_a, self.final_c
+        return
+    
+    def score(self, s_test, phi_test):
+        s_pred = phi_test @ self.final_c
+        pred_mse = np.mean((s_pred - s_test)**2)
+        return pred_mse

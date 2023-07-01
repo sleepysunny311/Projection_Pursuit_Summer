@@ -36,7 +36,7 @@ def get_cfg(config_file):
 
 def merge_cfg(default_dict, input_dict):
     merged_dict = default_dict.copy()  # Start with default values.
-    sections = ['MODEL', 'TEST', 'UTILS']  # Specify sections to update
+    sections = ['MODEL', 'TEST']  # Specify sections to update
 
     for section in sections:
         if section in default_dict and section in input_dict:
@@ -57,7 +57,6 @@ def merge_cfg(default_dict, input_dict):
             for key in input_dict[section]:
                 if key not in default_dict[section]:
                     print(f"Invalid key '{key}' in section '{section}'. This key will be ignored.")
-
     return merged_dict
     
 def get_output_path(output_path, config_filename):
