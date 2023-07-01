@@ -1,0 +1,30 @@
+
+method: 'OMP'
+signal_bag_flag: False
+signal_bag_percent: 0.5
+atom_bag_percent: 0.5
+select_atom_percent: 0.5
+replace_flag: False
+agg_func: 'weight'
+ignore_warning: True
+N: 100
+d: 150
+m: 10
+noise_levels:
+- 0
+- 0.1
+- 0.2
+random_seed: 0
+K_lst: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+cv_num: 10
+trial_num: 10
+
+
+
+hydra:
+  hydra_logging:
+    level: CRITICAL
+  job_logging:
+    level: CRITICAL
+  run:
+    dir: ./outputs

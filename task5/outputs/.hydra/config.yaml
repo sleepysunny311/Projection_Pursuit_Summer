@@ -1,0 +1,18 @@
+MODEL:
+  method: OMP123
+  'N': 100
+  K: 50
+  signal_bag_flag: false
+  signal_bag_percent: 0.5
+  atom_bag_percent: 0.5
+  select_atom_percent: 0.5
+  replace_flag: false
+  agg_func: weight
+  ignore_warning: true
+TEST:
+  trial_num: 50
+  true_sparsity: 50
+  noise_level:
+  - 0
+  - 0.1
+  - 0.2

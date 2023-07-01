@@ -72,7 +72,7 @@ def cv_best_K_noise_level_multi_trial(N, d, m, noise_level_lst, cv_num, K_lst, t
             trials_best_K_tmp.append(lowest_error_K)
             MSE_loweset_K_temp.append(lowest_error)
             print("Trial: ", trial, " Best K: ", lowest_error_K, " Lowest Error: ", lowest_error)
-            log_tmp = {'noise_level': noise_level, 'trial': trial, 'data': Data_Geneartor, 'cv_error_lst': cv_err_lst, 
+            log_tmp = {'noise_level': noise_level, 'trial': trial, 'cv_error_lst': cv_err_lst, 
                        'lowest_error': lowest_error, 'lowest_error_K': lowest_error_K}
             res_log['log'].append(log_tmp)
         noise_level_best_K.append(np.mean(trials_best_K_tmp))

@@ -1,0 +1,37 @@
+K_lst:
+- 10
+- 20
+- 30
+- 40
+- 50
+- 60
+- 70
+- 80
+- 90
+- 100
+N: 100
+agg_func: weight
+atom_bag_percent: 0.5
+cv_num: 10
+d: 150
+filename: 100_150_10_10_10_20230701.pkl
+hydra:
+  hydra_logging:
+    level: CRITICAL
+  job_logging:
+    level: CRITICAL
+  run:
+    dir: ./outputs
+ignore_warning: true
+m: 10
+method: OMP
+noise_levels:
+- 0
+- 0.1
+- 0.2
+random_seed: 0
+replace_flag: false
+select_atom_percent: 0.5
+signal_bag_flag: false
+signal_bag_percent: 0.5
+trial_num: 10
