@@ -2,6 +2,9 @@ import os
 import pickle as pkl
 import matplotlib.pyplot as plt
 
+## These functions are used to generate plots for OMP and Lasso
+## If you want to make plots for BOMP, new functions need to be written
+
 def makeplots(res_log, sep=False, savefig = True, ylim = None):
     if not os.path.exists('./images'):
         os.makedirs('./images')

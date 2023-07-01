@@ -1,0 +1,22 @@
+TEST:
+  n: 600
+  p: 1000
+  m: 20
+  noise_level: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+  model: BOMP
+  cv_num: 5
+  trial_num: 10
+MODEL:
+  signal_bag_flag: False
+  signal_bag_percent: 0.7
+  atom_bag_percent: 0.7
+  select_atom_percent: 0.3
+  replace_flag: False
+  agg_func: 'weight'
+  K_start: 1
+  K_end: 40
+  K_step: 1
+UTILS:
+  ignore_warning: True
+  random_seed: 0
+
