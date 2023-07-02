@@ -60,17 +60,7 @@ class SignalBagging:
 
         return self.s_bag, self.phi_bag
 
-    def change_seed(self, random_seed):
-        """
 
-        This function is used to change the random seed
-        After seed is changed the bagging samples will be different
-
-        Args:
-        random_seed (int): Random seed
-        """
-        self.random_seed = random_seed
-        self.fit(self.s, self.phi)
 
 
 class AtomBaggingBase(BaseEstimator):
@@ -144,6 +134,8 @@ class AtomBaggingBase(BaseEstimator):
     def input_coefficients(self, coefficients):
         self.coefficients = coefficients
 
+    def update_seed(self, random_seed):
+        self.random_seed = random_seed
 
 class OMP(AtomBaggingBase):
     def __init__(
@@ -272,8 +264,7 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
             self.r = self.s - self.a
         return self.a, self.coefficients
     
-    def update_seed(self, random_seed):
-        self.random_seed = random_seed
+
 
 
 class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
@@ -416,7 +407,6 @@ class BaggingPursuit(AtomBaggingBase):
         self.c_lst = []
         self.mse_lst = []
         self.indices_lst = []
-        self.coefficients_lst = []
         self.coefficients = None
         self.a = None
 
@@ -479,7 +469,6 @@ class BaggingPursuit(AtomBaggingBase):
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c) ** 2))
             self.indices_lst.append(self.tmpPursuitModel.indices)
-            self.coefficients_lst.append(self.tmpPursuitModel.coefficients)
 
         if self.agg_func == "weight":
             self.coefficients = self.agg_weight_with_error(self.c_lst, self.mse_lst)
@@ -537,7 +526,6 @@ class BOMP(AtomBaggingBase):
         self.c_lst = []
         self.mse_lst = []
         self.indices_lst = []
-        self.coefficients_lst = []
         self.coefficients = None
         self.a = None
 
@@ -598,13 +586,15 @@ class BOMP(AtomBaggingBase):
         for i in range(self.N_bag):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
+            self.tmpPursuitModel = AtomBaggingOrthogonalMatchingPursuit(
+            self.K, self.atom_bag_percent, self.select_atom_percent, np.random.randint(64), self.ignore_warning)
             self.tmpPursuitModel.fit(sub_phi, sub_s)
-            self.tempPursuitModel.change_seed(np.random.randint(10000000000))
+            # if (i==1):
+            #     print(self.tmpPursuitModel.indices)
             c = self.tmpPursuitModel.coefficients
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c) ** 2))
             self.indices_lst.append(self.tmpPursuitModel.indices)
-            self.coefficients_lst.append(self.tmpPursuitModel.coefficients)
 
         if self.agg_func == "weight":
             self.coefficients = self.agg_weight_with_error(self.c_lst, self.mse_lst)
