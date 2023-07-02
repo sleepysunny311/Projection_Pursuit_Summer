@@ -456,7 +456,7 @@ class BaggingPursuit(AtomBaggingBase):
         self.SignalBagging = SignalBagging(
             self.N, self.signal_bag_percent, self.replace_flag, self.random_seed
         )
-        self.SignalBagging.fit(self.s, self.phi)
+        self.SignalBagging.fit(self.phi, self.s)
 
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
