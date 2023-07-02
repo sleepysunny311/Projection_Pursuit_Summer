@@ -7,7 +7,6 @@ from sklearn.base import BaseEstimator
 class SignalBagging:
     def __init__(
         self,
-        signal_bag_flag,
         N,
         signal_bag_percent=0.7,
         replace_flag=True,
@@ -22,7 +21,6 @@ class SignalBagging:
         replace_flag (bool): Whether to sample with replacement
         random_seed (int): Random
         """
-        self.signal_bag_flag = signal_bag_flag
         self.s = None
         self.phi = None
         self.N = N
@@ -44,7 +42,8 @@ class SignalBagging:
 
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
-        if self.signal_bag_flag:
+
+        if self.signal_bag_percent:
             num_samples = int(self.signal_bag_percent * self.s.shape[0])
             for i in range(self.N):
                 indices = np.random.choice(
@@ -351,7 +350,6 @@ class BaggingPursuit(AtomBaggingBase):
         N,
         K,
         method="MP",
-        signal_bag_flag=True,
         signal_bag_percent=0.7,
         atom_bag_percent=1,
         select_atom_percent=0,
@@ -364,7 +362,6 @@ class BaggingPursuit(AtomBaggingBase):
         Args:
         N (int): Number of submodels
         K (int): Number of iterations
-        signal_bag_flag (bool): Whether to perform signal bagging
         signal_bag_percent (float): Percentage of the original signal
         atom_bag_percent (float): Percentage of the original dictionary
         select_atom_percent (float): Percentage of the selected atoms
@@ -376,11 +373,7 @@ class BaggingPursuit(AtomBaggingBase):
         self.N = N
         self.K = K
         self.method = method
-        self.signal_bag_flag = signal_bag_flag
-        if signal_bag_flag:
-            self.signal_bag_percent = signal_bag_percent
-        else:
-            self.signal_bag_percent = None
+        self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
         self.replace_flag = replace_flag
@@ -483,7 +476,6 @@ class BOMP(AtomBaggingBase):
         self,
         N_bag=10,
         K=10,
-        signal_bag_flag=True,
         signal_bag_percent=0.7,
         atom_bag_percent=1,
         select_atom_percent=0,
@@ -496,7 +488,6 @@ class BOMP(AtomBaggingBase):
         Args:
         N (int): Number of submodels
         K (int): Number of iterations
-        signal_bag_flag (bool): Whether to perform signal bagging
         signal_bag_percent (float): Percentage of the original signal
         atom_bag_percent (float): Percentage of the original dictionary
         select_atom_percent (float): Percentage of the selected atoms
@@ -506,11 +497,7 @@ class BOMP(AtomBaggingBase):
         """
         self.N_bag = N_bag
         self.K = K
-        self.signal_bag_flag = signal_bag_flag
-        if signal_bag_flag:
-            self.signal_bag_percent = signal_bag_percent
-        else:
-            self.signal_bag_percent = None
+        self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
         self.replace_flag = replace_flag
@@ -572,7 +559,6 @@ class BOMP(AtomBaggingBase):
         self.s = s
         self.phi = phi
         self.SignalBagging = SignalBagging(
-            self.signal_bag_flag,
             self.N_bag,
             self.signal_bag_percent,
             self.replace_flag,
@@ -589,8 +575,6 @@ class BOMP(AtomBaggingBase):
             self.tmpPursuitModel = AtomBaggingOrthogonalMatchingPursuit(
             self.K, self.atom_bag_percent, self.select_atom_percent, np.random.randint(64), self.ignore_warning)
             self.tmpPursuitModel.fit(sub_phi, sub_s)
-            # if (i==1):
-            #     print(self.tmpPursuitModel.indices)
             c = self.tmpPursuitModel.coefficients
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c) ** 2))

@@ -7,8 +7,7 @@ TEST:
   cv_num: 5
   trial_num: 10
 MODEL:
-  signal_bag_flag: [True, False]
-  signal_bag_percent: [0.9, 1]
+  signal_bag_percent: [0, 0.9, 1]
   select_atom_percent: 0
   atom_bag_percent: [0.7, 0.8]
   replace_flag: False
