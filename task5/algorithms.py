@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.base import BaseEstimator
+
 
 class OMP:
     def __init__(self, K, select_atom_percent = 0, random_seed=None, ignore_warning=False):
@@ -9,10 +11,10 @@ class OMP:
             self.atom_weak_select_flag = False
         
         self.indices = []
-        self.coefficients = []
+        self.coefficients = None
         self.ignore_warning = ignore_warning
     
-    def fit(self, s, phi):
+    def fit(self, phi, s):
 
         """
         Args:
@@ -23,7 +25,7 @@ class OMP:
         self.s = s
         self.phi = phi
         self.a = np.zeros_like(self.s)
-        self.c = np.zeros(phi.shape[1])
+        self.coefficients = np.zeros(phi.shape[1])
         self.r = self.s.copy()
 
         if self.random_seed is not None:
@@ -44,7 +46,6 @@ class OMP:
             #Ordinary least squares
             X = phi[:, self.indices+[lambda_k]]
 
-            ### TODO: 1. Dump Chosen Index
             try:
                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
             except:
@@ -56,21 +57,31 @@ class OMP:
             self.indices.append(lambda_k)
 
             #Update Coefficients
-            self.c = np.zeros(phi.shape[1])
-            self.c[self.indices] = betas.flatten()
+            self.coefficients = np.zeros(phi.shape[1])
+            self.coefficients[self.indices] = betas.flatten()
 
             #Update residual
             self.r = self.s - X @ betas
 
             #Update Projection
             self.a = X @ betas
-        return self.a, self.c
+        return self.a, self.coefficients
     
-    def score(self, s_test, phi_test):
-        s_pred = phi_test @ self.c
+    def score(self, phi_test,s_test):
+        s_pred = self.predict(phi_test)
         pred_mse = np.mean((s_pred - s_test)**2)
         return pred_mse
     
+    def predict(self, phi_test):
+        """
+        Args:
+        phi_test (numpy.ndarray): Test data
+
+        Returns:
+        numpy.ndarray: Predicted output
+        """
+        return phi_test @ self.coefficients
+
 
 
 # This file contains classes for different pursuit algorithms
@@ -97,7 +108,7 @@ class SignalBagging:
         self.s_bag = []
         self.phi_bag = []
 
-    def fit(self, s, phi):
+    def fit(self, phi, s):
 
         """
         Args:
@@ -135,7 +146,7 @@ class SignalBagging:
 
 
 
-class AtomBaggingBase:
+class AtomBaggingBase(BaseEstimator):
 
     # Submodel base
     def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=0, ignore_warning=False):
@@ -162,11 +173,45 @@ class AtomBaggingBase:
         self.s = None
         self.phi = None
         self.a = None
-        self.c = None
+        self.coefficients = None
         self.r = None
         
         self.random_seed = random_seed
         self.ignore_warning = ignore_warning
+
+    def fit(self, phi, s):
+        pass
+
+    def reset(self):
+        self.indices = []
+        self.s = None
+        self.phi = None
+        self.a = None
+        self.coefficients = None
+        self.r = None
+    
+    def fit(self, phi, s):
+        return None
+    
+    def predict(self, phi_test):
+        """
+        Args:
+        phi_test (numpy.ndarray): Test data
+
+        Returns:
+        numpy.ndarray: Predicted output
+        """
+
+        return phi_test @ self.coefficients
+
+    def score(self, s_test, phi_test):
+        s_pred = phi_test @ self.final_c
+        pred_mse = np.mean((s_pred - s_test)**2)
+        return pred_mse
+
+    def input_coefficients(self, coefficients):
+        self.coefficients = coefficients
+
 
 class AtomBaggingMatchingPursuit(AtomBaggingBase):
 
@@ -184,15 +229,8 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
 
         super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
         
-    def reset(self):
-        self.indices = []
-        self.s = None
-        self.phi = None
-        self.a = None
-        self.c = None
-        self.r = None
-    
-    def fit(self, s, phi):
+
+    def fit(self, phi, s):
 
         """
         Args:
@@ -207,7 +245,7 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
             self.s = s
         self.phi = phi
         self.a = np.zeros_like(self.s)
-        self.c = np.zeros(phi.shape[1])
+        self.coefficients = np.zeros(phi.shape[1])
         self.r = self.s.copy()
         
         if self.random_seed is not None:
@@ -225,10 +263,12 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
             else:
                 lambda_k = np.argmax(np.abs(inner_products))
             self.indices.append(lambda_k)
-            self.c[lambda_k] = self.c[lambda_k] + inner_products[lambda_k]
+            self.coefficients[lambda_k] = self.coefficients[lambda_k] + inner_products[lambda_k]
             self.a += inner_products[lambda_k] * phi[:, lambda_k].reshape(-1, 1)
             self.r = self.s - self.a
-        return self.a, self.c
+        return self.a, self.coefficients
+    
+
 
 
 class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
@@ -240,10 +280,10 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
         self.s = None
         self.phi = None
         self.a = None
-        self.c = None
+        self.coefficients = None
         self.r = None
     
-    def fit(self, s, phi):
+    def fit(self, phi, s):
         self.reset()
 
         """
@@ -257,7 +297,7 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
             self.s = s
         self.phi = phi
         self.a = np.zeros_like(self.s)
-        self.c = np.zeros(phi.shape[1])
+        self.coefficients = np.zeros(phi.shape[1])
         self.r = self.s.copy()
 
         if self.random_seed is not None:
@@ -291,19 +331,30 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
             self.indices.append(lambda_k)
 
             #Update Coefficients
-            self.c = np.zeros(phi.shape[1])
-            self.c[self.indices] = betas.flatten()
+            self.coefficients = np.zeros(phi.shape[1])
+            self.coefficients[self.indices] = betas.flatten()
 
             #Update residual
             self.r = self.s - X @ betas
 
             #Update Projection
             self.a = X @ betas
-        return self.a, self.c
+        return self.a, self.coefficients
+    
+    def predict(self, phi_test):
+        """
+        Args:
+        phi_test (numpy.ndarray): Test data
+
+        Returns:
+        numpy.ndarray: Predicted output
+        """
+
+        return phi_test @ self.coefficients
 
 
     
-class BaggingPursuit:
+class BaggingPursuit(AtomBaggingBase):
     def __init__(self, N, K, method = 'MP', signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=None, ignore_warning=False):
 
         """
@@ -351,8 +402,8 @@ class BaggingPursuit:
         self.mse_lst = []
         self.indices_lst = []
         self.coefficients_lst = []
-        self.final_c = None
-        self.final_a = None
+        self.coefficients = None
+        self.a = None
         
     def agg_weight_with_error(self,c_lst, mse_lst):
 
@@ -394,10 +445,10 @@ class BaggingPursuit:
         self.mse_lst = []
         self.indices_lst = []
         self.coefficients_lst = []
-        self.final_c = None
-        self.final_a = None
+        self.coefficients = None
+        self.a = None
 
-    def fit(self, s, phi):
+    def fit(self, phi, s):
 
         """
         Args:
@@ -417,28 +468,25 @@ class BaggingPursuit:
         for i in range(self.N):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
-            self.tmpPursuitModel.fit(sub_s, sub_phi)
-            c = self.tmpPursuitModel.c
+            self.tmpPursuitModel.fit(sub_phi, sub_s)
+            c = self.tmpPursuitModel.coefficients
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c)**2))
             self.indices_lst.append(self.tmpPursuitModel.indices)
-            self.coefficients_lst.append(self.tmpPursuitModel.c)
+            self.coefficients_lst.append(self.tmpPursuitModel.coefficients)
         
         if self.agg_func == 'weight':
-            self.final_c = self.agg_weight_with_error(self.c_lst, self.mse_lst)
+            self.coefficients = self.agg_weight_with_error(self.c_lst, self.mse_lst)
         else:
-            self.final_c = self.agg_weight_with_avg(self.c_lst)
-        self.final_a = self.phi @ self.final_c
+            self.coefficients = self.agg_weight_with_avg(self.c_lst)
+        self.a = self.phi @ self.coefficients
         # return self.final_a, self.final_c
-        return
+
     
-    def score(self, s_test, phi_test):
-        s_pred = phi_test @ self.final_c
-        pred_mse = np.mean((s_pred - s_test)**2)
-        return pred_mse
+
         
         
-class BOMP:
+class BOMP(AtomBaggingBase):
     def __init__(self, N_bag=10, K=10, signal_bag_flag=True, signal_bag_percent = 0.7, atom_bag_percent=1, select_atom_percent=0, replace_flag=True, agg_func='weight', random_seed=None, ignore_warning=False):
         """
         Args:
@@ -473,8 +521,8 @@ class BOMP:
         self.mse_lst = []
         self.indices_lst = []
         self.coefficients_lst = []
-        self.final_c = None
-        self.final_a = None
+        self.coefficients = None
+        self.a = None
         
     def agg_weight_with_error(self,c_lst, mse_lst):
 
@@ -516,10 +564,10 @@ class BOMP:
         self.mse_lst = []
         self.indices_lst = []
         self.coefficients_lst = []
-        self.final_c = None
-        self.final_a = None
+        self.coefficients = None
+        self.a = None
 
-    def fit(self, s, phi):
+    def fit(self, phi,s):
 
         """
         Args:
@@ -531,7 +579,7 @@ class BOMP:
         self.s = s
         self.phi = phi
         self.SignalBagging = SignalBagging(self.N_bag, self.signal_bag_percent, self.replace_flag, self.random_seed)
-        self.SignalBagging.fit(self.s, self.phi)
+        self.SignalBagging.fit(self.phi, self.s)
         
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
@@ -540,21 +588,15 @@ class BOMP:
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
             self.tmpPursuitModel.fit(sub_s, sub_phi)
-            c = self.tmpPursuitModel.c
+            c = self.tmpPursuitModel.coefficients
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c)**2))
             self.indices_lst.append(self.tmpPursuitModel.indices)
-            self.coefficients_lst.append(self.tmpPursuitModel.c)
+            self.coefficients_lst.append(self.tmpPursuitModel.coefficients)
         
         if self.agg_func == 'weight':
-            self.final_c = self.agg_weight_with_error(self.c_lst, self.mse_lst)
+            self.coefficients = self.agg_weight_with_error(self.c_lst, self.mse_lst)
         else:
-            self.final_c = self.agg_weight_with_avg(self.c_lst)
-        self.final_a = self.phi @ self.final_c
+            self.coefficients = self.agg_weight_with_avg(self.c_lst)
+        self.a = self.phi @ self.coefficients
         # return self.final_a, self.final_c
-        return
-    
-    def score(self, s_test, phi_test):
-        s_pred = phi_test @ self.final_c
-        pred_mse = np.mean((s_pred - s_test)**2)
-        return pred_mse
