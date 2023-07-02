@@ -111,8 +111,8 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             trials_loweset_MSE_temp = []
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
-            gs = GridSearchCV(model, param_grid, cv=cv_num, n_jobs=-1, verbose=0)
-            gs.fit(dictionary, perturbed_signal, scoring='neg_mean_squared_error')
+            gs = GridSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, verbose=0)
+            gs.fit(dictionary, perturbed_signal)
             cv_err_lst = -gs.cv_results_['mean_test_score']
             lowest_error = np.min(cv_err_lst)
             trials_loweset_MSE_temp.append(lowest_error)
