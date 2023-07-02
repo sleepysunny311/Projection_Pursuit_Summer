@@ -16,7 +16,6 @@ MODEL:
   K_start: 1
   K_end: 40
   K_step: 1
-UTILS:
   ignore_warning: True
   random_seed: 0
 
