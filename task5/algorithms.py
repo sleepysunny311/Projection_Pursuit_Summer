@@ -271,6 +271,9 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
             self.a += inner_products[lambda_k] * phi[:, lambda_k].reshape(-1, 1)
             self.r = self.s - self.a
         return self.a, self.coefficients
+    
+    def update_seed(self, random_seed):
+        self.random_seed = random_seed
 
 
 class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
@@ -286,13 +289,6 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
             K, atom_bag_percent, select_atom_percent, random_seed, ignore_warning
         )
 
-    def reset(self):
-        self.indices = []
-        self.s = None
-        self.phi = None
-        self.a = None
-        self.coefficients = None
-        self.r = None
 
     def fit(self, phi, s):
         self.reset()
@@ -356,16 +352,6 @@ class AtomBaggingOrthogonalMatchingPursuit(AtomBaggingBase):
             self.a = X @ betas
         return self.a, self.coefficients
 
-    def predict(self, phi_test):
-        """
-        Args:
-        phi_test (numpy.ndarray): Test data
-
-        Returns:
-        numpy.ndarray: Predicted output
-        """
-
-        return phi_test @ self.coefficients
 
 
 class BaggingPursuit(AtomBaggingBase):
@@ -466,14 +452,6 @@ class BaggingPursuit(AtomBaggingBase):
             tot += c_lst[i]
         return tot / len(c_lst)
 
-    def reset(self):
-        self.SignalBagging = None
-        self.c_lst = []
-        self.mse_lst = []
-        self.indices_lst = []
-        self.coefficients_lst = []
-        self.coefficients = None
-        self.a = None
 
     def fit(self, phi, s):
         """
@@ -595,15 +573,6 @@ class BOMP(AtomBaggingBase):
             tot += c_lst[i]
         return tot / len(c_lst)
 
-    def reset(self):
-        self.SignalBagging = None
-        self.c_lst = []
-        self.mse_lst = []
-        self.indices_lst = []
-        self.coefficients_lst = []
-        self.coefficients = None
-        self.a = None
-
     def fit(self, phi, s):
         """
         Args:
@@ -630,6 +599,7 @@ class BOMP(AtomBaggingBase):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
             self.tmpPursuitModel.fit(sub_phi, sub_s)
+            self.tempPursuitModel.change_seed(np.random.randint(10000000000))
             c = self.tmpPursuitModel.coefficients
             self.c_lst.append(c)
             self.mse_lst.append(np.mean((sub_s - sub_phi @ c) ** 2))
