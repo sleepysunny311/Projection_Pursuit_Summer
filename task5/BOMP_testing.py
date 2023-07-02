@@ -60,12 +60,17 @@ def merge_cfg(default_dict, input_dict):
     return merged_dict
     
 def get_output_path(output_path, config_filename):
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     if output_path is None:
         # output file will be a pickle file in the outputs folder
-        output_path = os.path.join("./memory", config_filename.split("/")[-1].split(".")[0] + ".pkl")
+        if not os.path.exists("./memory"):
+            os.makedirs("./memory")
+        output_path = os.path.join("./memory", config_filename.split("/")[-1].split(".")[0] + timestamp + ".pkl")
     else:
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         # output file will be a pickle file in the specified folder
-        output_path = os.path.join(output_path, config_filename.split("/")[-1].split(".")[0] + ".pkl")
+        output_path = os.path.join(output_path, config_filename.split("/")[-1].split(".")[0] + timestamp + ".pkl")
     return output_path    
 
 def get_model_params(config):
@@ -104,7 +109,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
         'noise_level_lowest_MSE': [],
         'log': []
     }
-    print(f"Running trials for n={n}, p={p}, m={m}")
+    print(f"Running trials for n = {n}, p = {p}, m = {m}")
     for noise_level in noise_level_lst:
         print("Cross validating alpha under noise level: ", noise_level)
         for trial_id in range(trial_num):
@@ -170,19 +175,11 @@ if __name__ == '__main__':
     
     # Output folder for the current config file
     output_dir = get_output_path(args.output, args.config)
-        
-    # Create the output folder if it does not exist
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    
+
     ALL_LOGS = run_tests(full_config)
     
-    # file name being the config file name
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    reslogFilename = args.config.split("/")[-1].split(".")[0] + '_' + timestamp +".pkl"
-    
-    with open(os.path.join(output_dir, reslogFilename), 'wb') as f:
+    with open(output_dir, 'wb') as f:
         pkl.dump(ALL_LOGS, f)
         
     print("Done!")
-    print("Results are saved in: ", output_dir + "/" + reslogFilename)
+    print("Results are saved in: ", output_dir)
