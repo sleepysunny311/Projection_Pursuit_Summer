@@ -5,6 +5,7 @@
 **/memory/
 **/memory_sty/
 **/memory_lasso/
+slurm_outputs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
