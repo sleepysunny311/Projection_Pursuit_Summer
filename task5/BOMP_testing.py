@@ -112,8 +112,8 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
     print(f"Running trials for n = {n}, p = {p}, m = {m}")
     for noise_level in noise_level_lst:
         print("Cross validating alpha under noise level: ", noise_level)
+        trials_loweset_MSE_temp = []
         for trial_id in range(trial_num):
-            trials_loweset_MSE_temp = []
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
             gs = GridSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, verbose=0)
