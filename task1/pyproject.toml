@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "summer2023"
-version = "0.1.5"
+version = "0.1.6"
 description = "Projection Pursuit, Machine Learning"
 authors = ["David Zheng", "Tengyu Song", "Hongyan Zhou"]
 
@@ -13,8 +13,9 @@ scikit-learn = "^1.0"
 PyYAML = "^5.4"
 jupyter = "^1.0"
 matplotlib = "^3.4.2"
-plotly = "^4.14.3"
-seaborn = "0.12.2"
+plotly = "^5.3.1"
+seaborn = "^0.12.2"
+regex = "^2023.6.3"
 
 [build-system]
 requires = ["poetry-core>=0.12"]

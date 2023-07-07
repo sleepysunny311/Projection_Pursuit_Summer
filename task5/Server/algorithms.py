@@ -42,7 +42,7 @@ class SignalBagging:
 
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
-
+        
         if self.signal_bag_percent:
             num_samples = int(self.signal_bag_percent * self.s.shape[0])
             for i in range(self.N):
