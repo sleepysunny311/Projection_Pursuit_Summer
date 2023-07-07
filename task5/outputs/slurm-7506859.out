@@ -1,0 +1,122 @@
+Cross validating K under noise level:  0.02
+Trial:  0  Best K:  17  Lowest Error:  0.0004797926292080734
+Trial:  1  Best K:  21  Lowest Error:  0.00043174239054082
+Trial:  2  Best K:  18  Lowest Error:  0.0004977894839637818
+Trial:  3  Best K:  20  Lowest Error:  0.00045517501701809157
+Trial:  4  Best K:  19  Lowest Error:  0.0004637522177121314
+Trial:  5  Best K:  19  Lowest Error:  0.00043416048054938555
+Trial:  6  Best K:  18  Lowest Error:  0.000495720714845233
+Trial:  7  Best K:  24  Lowest Error:  0.0005476694966857704
+Trial:  8  Best K:  22  Lowest Error:  0.000459131926601499
+Trial:  9  Best K:  25  Lowest Error:  0.0004675741895430999
+Average best K for noise level:  0.02  is:  20.3  with MSE:  0.0004732508546667886
+Cross validating K under noise level:  0.04
+Trial:  0  Best K:  20  Lowest Error:  0.0019390805540559814
+Trial:  1  Best K:  18  Lowest Error:  0.001690143563034805
+Trial:  2  Best K:  21  Lowest Error:  0.0019952969693647882
+Trial:  3  Best K:  20  Lowest Error:  0.0018207000680723674
+Trial:  4  Best K:  15  Lowest Error:  0.0018258746486551282
+Trial:  5  Best K:  18  Lowest Error:  0.0017076031094234365
+Trial:  6  Best K:  24  Lowest Error:  0.002012434702496297
+Trial:  7  Best K:  18  Lowest Error:  0.0021757643285889193
+Trial:  8  Best K:  16  Lowest Error:  0.0018553399550692209
+Trial:  9  Best K:  17  Lowest Error:  0.0018959374587421162
+Average best K for noise level:  0.04  is:  18.7  with MSE:  0.0018918175357503062
+Cross validating K under noise level:  0.06
+Trial:  0  Best K:  25  Lowest Error:  0.0042882171961153475
+Trial:  1  Best K:  15  Lowest Error:  0.00388654098271341
+Trial:  2  Best K:  17  Lowest Error:  0.004450280269385917
+Trial:  3  Best K:  19  Lowest Error:  0.0043020375054549495
+Trial:  4  Best K:  15  Lowest Error:  0.003983996558075848
+Trial:  5  Best K:  12  Lowest Error:  0.0037100005592556793
+Trial:  6  Best K:  16  Lowest Error:  0.004500783228538442
+Trial:  7  Best K:  18  Lowest Error:  0.0047682800975745706
+Trial:  8  Best K:  18  Lowest Error:  0.004096118466386011
+Trial:  9  Best K:  16  Lowest Error:  0.004109519800506929
+Average best K for noise level:  0.06  is:  17.1  with MSE:  0.0042095774664007105
+Cross validating K under noise level:  0.08
+Trial:  0  Best K:  15  Lowest Error:  0.007777841288739813
+Trial:  1  Best K:  16  Lowest Error:  0.0067887383283521925
+Trial:  2  Best K:  21  Lowest Error:  0.007659444828916434
+Trial:  3  Best K:  21  Lowest Error:  0.007383314348655555
+Trial:  4  Best K:  15  Lowest Error:  0.00708004331161328
+Trial:  5  Best K:  15  Lowest Error:  0.006748348367046337
+Trial:  6  Best K:  26  Lowest Error:  0.007961364869838321
+Trial:  7  Best K:  21  Lowest Error:  0.00853378545792971
+Trial:  8  Best K:  23  Lowest Error:  0.00727535629996068
+Trial:  9  Best K:  16  Lowest Error:  0.007238397804558023
+Average best K for noise level:  0.08  is:  18.9  with MSE:  0.007444663490561035
+Cross validating K under noise level:  0.1
+Trial:  0  Best K:  15  Lowest Error:  0.012309708793103665
+Trial:  1  Best K:  15  Lowest Error:  0.010269019305653711
+Trial:  2  Best K:  11  Lowest Error:  0.01172909073865771
+Trial:  3  Best K:  17  Lowest Error:  0.011468669157590709
+Trial:  4  Best K:  18  Lowest Error:  0.011338597982655003
+Trial:  5  Best K:  10  Lowest Error:  0.010829532851079389
+Trial:  6  Best K:  15  Lowest Error:  0.012523729475764467
+Trial:  7  Best K:  18  Lowest Error:  0.013229542729363677
+Trial:  8  Best K:  13  Lowest Error:  0.011542461985483334
+Trial:  9  Best K:  11  Lowest Error:  0.011312314393323248
+Average best K for noise level:  0.1  is:  14.3  with MSE:  0.011655266741267493
+Cross validating K under noise level:  0.12
+Trial:  0  Best K:  16  Lowest Error:  0.017190894877299034
+Trial:  1  Best K:  12  Lowest Error:  0.014507769909449377
+Trial:  2  Best K:  11  Lowest Error:  0.01664870324593162
+Trial:  3  Best K:  24  Lowest Error:  0.016933905326883034
+Trial:  4  Best K:  13  Lowest Error:  0.015973544724897017
+Trial:  5  Best K:  10  Lowest Error:  0.015779020869461553
+Trial:  6  Best K:  13  Lowest Error:  0.017997901706808185
+Trial:  7  Best K:  10  Lowest Error:  0.019565864009518992
+Trial:  8  Best K:  12  Lowest Error:  0.016320884805074768
+Trial:  9  Best K:  20  Lowest Error:  0.01640762770740845
+Average best K for noise level:  0.12  is:  14.1  with MSE:  0.016732611718273206
+Cross validating K under noise level:  0.14
+Trial:  0  Best K:  15  Lowest Error:  0.023514788692370933
+Trial:  1  Best K:  8  Lowest Error:  0.020191303620492044
+Trial:  2  Best K:  9  Lowest Error:  0.022910022346853676
+Trial:  3  Best K:  19  Lowest Error:  0.022721295519017054
+Trial:  4  Best K:  18  Lowest Error:  0.022359579100739324
+Trial:  5  Best K:  10  Lowest Error:  0.0212218190734764
+Trial:  6  Best K:  9  Lowest Error:  0.02441291323585309
+Trial:  7  Best K:  8  Lowest Error:  0.02579905606462602
+Trial:  8  Best K:  10  Lowest Error:  0.02231847378481717
+Trial:  9  Best K:  21  Lowest Error:  0.022021430139994372
+Average best K for noise level:  0.14  is:  12.7  with MSE:  0.022747068157824006
+Cross validating K under noise level:  0.16
+Trial:  0  Best K:  10  Lowest Error:  0.030835512814061227
+Trial:  1  Best K:  12  Lowest Error:  0.0256244105227457
+Trial:  2  Best K:  9  Lowest Error:  0.029512271949151687
+Trial:  3  Best K:  18  Lowest Error:  0.030788284714258013
+Trial:  4  Best K:  15  Lowest Error:  0.029155311974169106
+Trial:  5  Best K:  10  Lowest Error:  0.027519320598415394
+Trial:  6  Best K:  12  Lowest Error:  0.030775077966234153
+Trial:  7  Best K:  11  Lowest Error:  0.034315935132920375
+Trial:  8  Best K:  10  Lowest Error:  0.029355502901358042
+Trial:  9  Best K:  9  Lowest Error:  0.028039494538853783
+Average best K for noise level:  0.16  is:  11.6  with MSE:  0.029592112311216744
+Cross validating K under noise level:  0.18
+Trial:  0  Best K:  14  Lowest Error:  0.03878335622005319
+Trial:  1  Best K:  9  Lowest Error:  0.03200662552017051
+Trial:  2  Best K:  8  Lowest Error:  0.03685030759202709
+Trial:  3  Best K:  19  Lowest Error:  0.03955313507343493
+Trial:  4  Best K:  11  Lowest Error:  0.03637894487802513
+Trial:  5  Best K:  7  Lowest Error:  0.034521983782389874
+Trial:  6  Best K:  4  Lowest Error:  0.03961260014342992
+Trial:  7  Best K:  6  Lowest Error:  0.04321277987792889
+Trial:  8  Best K:  12  Lowest Error:  0.036668644375503615
+Trial:  9  Best K:  9  Lowest Error:  0.035348734875524514
+Average best K for noise level:  0.18  is:  9.9  with MSE:  0.03729371123384877
+Cross validating K under noise level:  0.2
+Trial:  0  Best K:  6  Lowest Error:  0.047397085497079716
+Trial:  1  Best K:  7  Lowest Error:  0.03941130408099637
+Trial:  2  Best K:  9  Lowest Error:  0.045575037021344286
+Trial:  3  Best K:  15  Lowest Error:  0.04915544298477956
+Trial:  4  Best K:  11  Lowest Error:  0.044598372021064
+Trial:  5  Best K:  16  Lowest Error:  0.04187194004825081
+Trial:  6  Best K:  8  Lowest Error:  0.04727604242089682
+Trial:  7  Best K:  11  Lowest Error:  0.05236481544354019
+Trial:  8  Best K:  7  Lowest Error:  0.045682301132252814
+Trial:  9  Best K:  8  Lowest Error:  0.04440406072561627
+Average best K for noise level:  0.2  is:  9.8  with MSE:  0.045773640137582075
+Finished!
+Log file saved to:  ./memory/OMPtest_002_01.pkl.pkl
