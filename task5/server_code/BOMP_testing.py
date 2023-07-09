@@ -121,11 +121,12 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             gs = GridSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, verbose=0)
             gs.fit(dictionary, perturbed_signal)
             cv_err_lst = -gs.cv_results_['mean_test_score']
+            param_lst = gs.cv_results_['params']
             lowest_error = np.min(cv_err_lst)
             trials_loweset_MSE_temp.append(lowest_error)
             best_params = gs.best_params_
             reslog_one_trial = {'noise_level': noise_level, 'trial': trial_id, 'cv_error_lst': cv_err_lst, 
-                            'lowest_error': lowest_error, 'best_params': best_params}
+                            'lowest_error': lowest_error, 'best_params': best_params, 'param_lst': param_lst}
             res_log_npm['log'].append(reslog_one_trial)
             print("Trial: ", trial_id, " Best params: ", best_params, " Lowest Error: ", lowest_error)
         res_log_npm['noise_level_lowest_MSE'].append(np.mean(trials_loweset_MSE_temp))
