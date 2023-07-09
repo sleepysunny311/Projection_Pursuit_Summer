@@ -1,0 +1,113 @@
+Running trials for n = 600, p = 1000, m = 20
+Cross validating alpha under noise level:  0.02
+Trial:  0  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.2}  Lowest Error:  0.00044531266715768295
+Trial:  1  Best params:  {'K': 19, 'N_bag': 75, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.0003799002471064379
+Trial:  2  Best params:  {'K': 19, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1}  Lowest Error:  0.00041355407373895646
+Trial:  3  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.8, 'signal_bag_percent': 0.8}  Lowest Error:  0.00041605111828148906
+Trial:  4  Best params:  {'K': 23, 'N_bag': 25, 'atom_bag_percent': 0.5, 'signal_bag_percent': 0.8}  Lowest Error:  0.0004128223552666096
+Trial:  5  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8}  Lowest Error:  0.0003915573994155915
+Trial:  6  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 0.6}  Lowest Error:  0.0004406746532339143
+Trial:  7  Best params:  {'K': 21, 'N_bag': 100, 'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8}  Lowest Error:  0.00047980844337924984
+Trial:  8  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.00043587930380304285
+Trial:  9  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.0004211293710019138
+Trial:  10  Best params:  {'K': 23, 'N_bag': 100, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.00040852599594793553
+Trial:  11  Best params:  {'K': 23, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.00039676644125854284
+Trial:  12  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.4}  Lowest Error:  0.00044076819822242905
+Trial:  13  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1}  Lowest Error:  0.0004256805395390504
+Trial:  14  Best params:  {'K': 23, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.4}  Lowest Error:  0.0004517398165926145
+Trial:  15  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.4}  Lowest Error:  0.0004459095004690413
+Trial:  16  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.4}  Lowest Error:  0.0004065986157616242
+Trial:  17  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.0004659760670247336
+Trial:  18  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8}  Lowest Error:  0.0003973703808195007
+Trial:  19  Best params:  {'K': 23, 'N_bag': 25, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1}  Lowest Error:  0.00048051930657112845
+Noise level:  0.02  Avg Lowest MSE:  0.00042782722472957445
+Cross validating alpha under noise level:  0.04
+Trial:  0  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.0018230335080910791
+Trial:  1  Best params:  {'K': 17, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.001560894033297662
+Trial:  2  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1}  Lowest Error:  0.001666392982038385
+Trial:  3  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.4}  Lowest Error:  0.0017127595528758134
+Trial:  4  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.0016484959456830525
+Trial:  5  Best params:  {'K': 23, 'N_bag': 10, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.001610705370133711
+Trial:  6  Best params:  {'K': 19, 'N_bag': 10, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.2}  Lowest Error:  0.0017674512425362378
+Trial:  7  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.2}  Lowest Error:  0.0019361785095529647
+Trial:  8  Best params:  {'K': 17, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.001757396101594287
+Trial:  9  Best params:  {'K': 19, 'N_bag': 100, 'atom_bag_percent': 1, 'signal_bag_percent': 1.2}  Lowest Error:  0.0017298305083455312
+Trial:  10  Best params:  {'K': 27, 'N_bag': 10, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.2}  Lowest Error:  0.0016503657151841263
+Trial:  11  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.0016008420488960395
+Trial:  12  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1}  Lowest Error:  0.0017901807090229416
+Trial:  13  Best params:  {'K': 17, 'N_bag': 10, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.0016771021138224252
+Trial:  14  Best params:  {'K': 27, 'N_bag': 100, 'atom_bag_percent': 0.7, 'signal_bag_percent': 0.6}  Lowest Error:  0.0018346386562503696
+Trial:  15  Best params:  {'K': 27, 'N_bag': 100, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1}  Lowest Error:  0.0017715582582663112
+Trial:  16  Best params:  {'K': 21, 'N_bag': 100, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.001683767748808219
+Trial:  17  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.2}  Lowest Error:  0.0018946152601855503
+Trial:  18  Best params:  {'K': 21, 'N_bag': 75, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.0015996600022878365
+Trial:  19  Best params:  {'K': 25, 'N_bag': 100, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.0019527831145505809
+Noise level:  0.04  Avg Lowest MSE:  0.0017334325690711565
+Cross validating alpha under noise level:  0.06
+Trial:  0  Best params:  {'K': 23, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.004196604632562622
+Trial:  1  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.4}  Lowest Error:  0.003518096319039689
+Trial:  2  Best params:  {'K': 19, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1.4}  Lowest Error:  0.003730502278072963
+Trial:  3  Best params:  {'K': 19, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.003879201615729318
+Trial:  4  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1.4}  Lowest Error:  0.0037712510623419447
+Trial:  5  Best params:  {'K': 23, 'N_bag': 50, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.2}  Lowest Error:  0.0038722930296589122
+Trial:  6  Best params:  {'K': 19, 'N_bag': 10, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.004170334523925144
+Trial:  7  Best params:  {'K': 21, 'N_bag': 100, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.004410506400159331
+Trial:  8  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.003936779342599939
+Trial:  9  Best params:  {'K': 17, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.003837308741333313
+Trial:  10  Best params:  {'K': 23, 'N_bag': 50, 'atom_bag_percent': 0.8, 'signal_bag_percent': 0.8}  Lowest Error:  0.0037101689050646576
+Trial:  11  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.0036536815779908208
+Trial:  12  Best params:  {'K': 23, 'N_bag': 10, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1}  Lowest Error:  0.004150484275958802
+Trial:  13  Best params:  {'K': 17, 'N_bag': 10, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.2}  Lowest Error:  0.003850864047130316
+Trial:  14  Best params:  {'K': 19, 'N_bag': 50, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.004090354979370575
+Trial:  15  Best params:  {'K': 27, 'N_bag': 75, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1}  Lowest Error:  0.003984838944869144
+Trial:  16  Best params:  {'K': 19, 'N_bag': 75, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.003831772589738852
+Trial:  17  Best params:  {'K': 17, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.4}  Lowest Error:  0.004282125234364483
+Trial:  18  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.0036309913115698637
+Trial:  19  Best params:  {'K': 27, 'N_bag': 100, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.004562146778318959
+Noise level:  0.06  Avg Lowest MSE:  0.003953515329489983
+Cross validating alpha under noise level:  0.08
+Trial:  0  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.4}  Lowest Error:  0.007585579545901245
+Trial:  1  Best params:  {'K': 17, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1}  Lowest Error:  0.006298621522036372
+Trial:  2  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.4}  Lowest Error:  0.006793246858913024
+Trial:  3  Best params:  {'K': 19, 'N_bag': 100, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.006985285411439267
+Trial:  4  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.006791055694948735
+Trial:  5  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.4}  Lowest Error:  0.00689137892634898
+Trial:  6  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.007493148427024027
+Trial:  7  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.008106258584785283
+Trial:  8  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.006978037744112655
+Trial:  9  Best params:  {'K': 17, 'N_bag': 100, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.006780551994956477
+Trial:  10  Best params:  {'K': 19, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 0.8}  Lowest Error:  0.006538942808772976
+Trial:  11  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.00662216492193114
+Trial:  12  Best params:  {'K': 17, 'N_bag': 10, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1}  Lowest Error:  0.007473016030374098
+Trial:  13  Best params:  {'K': 17, 'N_bag': 10, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.00687592189705695
+Trial:  14  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.007421961776279006
+Trial:  15  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1}  Lowest Error:  0.007045702614674037
+Trial:  16  Best params:  {'K': 17, 'N_bag': 75, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.006764733055908962
+Trial:  17  Best params:  {'K': 17, 'N_bag': 100, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.4}  Lowest Error:  0.0075680684259041495
+Trial:  18  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.006405169860636127
+Trial:  19  Best params:  {'K': 21, 'N_bag': 50, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1}  Lowest Error:  0.008160374143884843
+Noise level:  0.08  Avg Lowest MSE:  0.007078961012294419
+Cross validating alpha under noise level:  0.1
+Trial:  0  Best params:  {'K': 19, 'N_bag': 75, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.4}  Lowest Error:  0.011930856069537709
+Trial:  1  Best params:  {'K': 15, 'N_bag': 100, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.4}  Lowest Error:  0.009841280653221415
+Trial:  2  Best params:  {'K': 21, 'N_bag': 10, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.4}  Lowest Error:  0.01096190779668781
+Trial:  3  Best params:  {'K': 21, 'N_bag': 100, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.011296564531283096
+Trial:  4  Best params:  {'K': 23, 'N_bag': 10, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.01089920245061259
+Trial:  5  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 0.8}  Lowest Error:  0.010488303233588752
+Trial:  6  Best params:  {'K': 15, 'N_bag': 10, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.011843886542622237
+Trial:  7  Best params:  {'K': 21, 'N_bag': 100, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.013315719289118066
+Trial:  8  Best params:  {'K': 15, 'N_bag': 25, 'atom_bag_percent': 0.8, 'signal_bag_percent': 1.6}  Lowest Error:  0.010912326984081422
+Trial:  9  Best params:  {'K': 17, 'N_bag': 75, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.010671518139389507
+Trial:  10  Best params:  {'K': 19, 'N_bag': 50, 'atom_bag_percent': 0.8, 'signal_bag_percent': 0.8}  Lowest Error:  0.010125325223476667
+Trial:  11  Best params:  {'K': 17, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.010479676827789275
+Trial:  12  Best params:  {'K': 21, 'N_bag': 25, 'atom_bag_percent': 0.7, 'signal_bag_percent': 0.8}  Lowest Error:  0.011737516835759897
+Trial:  13  Best params:  {'K': 15, 'N_bag': 10, 'atom_bag_percent': 1, 'signal_bag_percent': 1.6}  Lowest Error:  0.010815045395685948
+Trial:  14  Best params:  {'K': 37, 'N_bag': 100, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.4}  Lowest Error:  0.011936121110305918
+Trial:  15  Best params:  {'K': 23, 'N_bag': 25, 'atom_bag_percent': 1, 'signal_bag_percent': 1}  Lowest Error:  0.011111687817420694
+Trial:  16  Best params:  {'K': 15, 'N_bag': 75, 'atom_bag_percent': 0.7, 'signal_bag_percent': 1.6}  Lowest Error:  0.010488629188074906
+Trial:  17  Best params:  {'K': 17, 'N_bag': 100, 'atom_bag_percent': 0.6, 'signal_bag_percent': 1.6}  Lowest Error:  0.012011820459171001
+Trial:  18  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.9, 'signal_bag_percent': 1.6}  Lowest Error:  0.009950536590620408
+Trial:  19  Best params:  {'K': 19, 'N_bag': 25, 'atom_bag_percent': 0.5, 'signal_bag_percent': 1.6}  Lowest Error:  0.01263766534325642
+Noise level:  0.1  Avg Lowest MSE:  0.011172779524085187
+Done!
+Results are saved in:  ./memory/bomp_1000_600_20_test5_replace20230707-201124.pkl
