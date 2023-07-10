@@ -44,7 +44,6 @@ class OMP:
             #Ordinary least squares
             X = phi[:, self.indices+[lambda_k]]
 
-            ### TODO: 1. Dump Chosen Index
             try:
                 betas = np.linalg.inv(X.T @ X) @ X.T @ self.s
             except:
