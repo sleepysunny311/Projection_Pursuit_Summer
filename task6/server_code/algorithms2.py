@@ -42,9 +42,12 @@ class SignalAtomBagging:
 
         self.s = s
         self.phi = phi
+        print(self.phi.shape)
 
         num_samples = int(self.signal_bag_percent * self.s.shape[0])
         num_atoms = int(self.atom_bag_percent * self.phi.shape[1])
+        print("num_samples", num_samples)
+        print("num_atoms", num_atoms)
 
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
@@ -58,7 +61,7 @@ class SignalAtomBagging:
                     self.phi.shape[1], num_atoms, replace=False
                 )
                 s_tmp = self.s[row_indices]
-                phi_tmp = self.phi[row_indices, col_indices]
+                phi_tmp = self.phi[row_indices, :][:, col_indices]
                 self.s_bag.append(s_tmp)
                 self.phi_bag.append(phi_tmp)
                 self.col_idx_bag.append(col_indices)
