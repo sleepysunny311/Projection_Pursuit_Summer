@@ -18,8 +18,13 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV
 import pickle as pkl
 
+
+
 import warnings
 warnings.filterwarnings('ignore')
+
+from algorithms import BOMP
+
 
 def get_parser():
     parser = argparse.ArgumentParser(description='Testing')
@@ -100,11 +105,11 @@ def get_model_params(config):
     
 def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
     # get the model
-    from algorithms import BOMP, BMP
+
     if model_name == "BOMP": 
         model = BOMP(**fixed_params)
-    elif model_name == "BMP":
-        model = BMP(**fixed_params)
+    # elif model_name == "BMP":
+    #     model = BMP(**fixed_params)
     
     res_log_npm = {
         'parameters': {'n': n, 'p': p, 'm': m, 'noise_level_lst': noise_level_lst, 'model_name': model_name, 'cv_num': cv_num, 'trial_num': trial_num, 'param_grid': param_grid, 'fixed_params': fixed_params},
