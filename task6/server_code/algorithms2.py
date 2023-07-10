@@ -4,7 +4,7 @@ from sklearn.base import BaseEstimator
 # This file contains classes for different pursuit algorithms
 
 
-class SignalBagging:
+class SignalAtomBagging:
     def __init__(
         self,
         N,
@@ -29,6 +29,7 @@ class SignalBagging:
         self.signal_bag_percent = signal_bag_percent
         self.s_bag = []
         self.phi_bag = []
+        self.col_idx_bag = []
 
     def fit(self, phi, s):
         """
@@ -57,7 +58,7 @@ class SignalBagging:
             self.s_bag = [self.s] * self.N
             self.phi_bag = [self.phi] * self.N
 
-        return self.s_bag, self.phi_bag
+        return self.s_bag, self.phi_bag, self.col_idx_bag
 
 
 
