@@ -309,10 +309,10 @@ class BOMP(AtomBaggingBase):
         self.s = None
         self.phi = None
         self.tmpPursuitModel = OMP_Augmented(
-            K, atom_bag_percent, select_atom_percent, random_seed, ignore_warning
+            K, select_atom_percent, random_seed, ignore_warning
         )
         self.SignalBagging = None
-        self.c_lst = []
+        self.coefficients_lst = []
         self.mse_lst = []
         # self.indices_lst = []
         self.coefficients = None
@@ -384,14 +384,15 @@ class BOMP(AtomBaggingBase):
                 self.ignore_warning,
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
-            sub_coefficients = np.zeros(phi.shape[1])
-            sub_coefficients[sub_idx] = self.tmpPursuitModel.coefficients
-            self.c_lst.append(sub_coefficients)
+            sub_coefficients = self.tmpPursuitModel.coefficients
             self.mse_lst.append(np.mean((sub_s - sub_phi @ sub_coefficients) ** 2))
+            real_sub_coefficients = np.zeros(phi.shape[1])
+            real_sub_coefficients[sub_idx] = sub_coefficients
+            self.coefficients_lst.append(real_sub_coefficients)
             # self.indices_lst.append(self.tmpPursuitModel.indices)
 
         if self.agg_func == "weight":
-            self.coefficients = self.agg_weight_with_error(self.c_lst, self.mse_lst)
+            self.coefficients = self.agg_weight_with_error(self.coefficients_lst, self.mse_lst)
         else:
-            self.coefficients = self.agg_weight_with_avg(self.c_lst)
+            self.coefficients = self.agg_weight_with_avg(self.coefficients_lst)
         self.a = self.phi @ self.coefficients
