@@ -1,0 +1,38 @@
+MODEL:
+  K_end: 101
+  K_start: 1
+  K_step: 5
+  N_bag:
+  - 1
+  - 50
+  - 100
+  - 200
+  - 300
+  - 400
+  - 500
+  agg_func: weight
+  atom_bag_percent:
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.9
+  - 1
+  ignore_warning: true
+  random_seed: 1
+  replace_flag: null
+  select_atom_percent: 0
+  signal_bag_percent:
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.9
+  - 1
+TEST:
+  cv_num: 5
+  m: 20
+  model: BOMP
+  n: 600
+  noise_level: 0.2
+  p: 1000
+  trial_num: 20
