@@ -4,7 +4,6 @@ import multiprocessing as mp
 import os
 import time
 import yaml
-import pickle as pkl
 import hashlib
 import json
 import pandas as pd
@@ -76,7 +75,6 @@ def get_output_path(output_path, config_filename):
     return output_path    
 
 def get_model_params(config):
-    import numpy as np
     all_params = config['MODEL']
     param_grid = {}
     fixed_params = {}
@@ -134,7 +132,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
         print("Noise level: ", noise_level, " Avg Lowest MSE: ", np.mean(trials_loweset_MSE_temp))
     return res_log_npm
 
-def run_tests(config):
+def run_tests(config, output_path):
     # TODO: Implement this function
     n_tmp = config['TEST']['n']
     p_tmp = config['TEST']['p']
@@ -160,13 +158,23 @@ def run_tests(config):
     # Get model parameters
     fixed_params, param_grid = get_model_params(config)
     
-    # Start running the tests
-    ALL_LOGS = []
     
     for n, p, m in npm_lst:
+        ALL_LOGS = None
         reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num)
+        ALL_LOGS = None
+        try:
+            with open(output_path, 'rb') as f:
+                ALL_LOGS = pkl.load(f)
+        except:
+            ALL_LOGS = []
+
         ALL_LOGS.append(reslog_npm)
-        
+        with open(output_path, 'wb') as f:
+            pkl.dump(ALL_LOGS, f)
+
+    print("Done!")
+    print("Results are saved in: ", output_path)
     return ALL_LOGS
 
 if __name__ == '__main__':
@@ -181,10 +189,7 @@ if __name__ == '__main__':
     # Output folder for the current config file
     output_dir = get_output_path(args.output, args.config)
 
-    ALL_LOGS = run_tests(full_config)
+    _ = run_tests(full_config, output_dir)
     
-    with open(output_dir, 'wb') as f:
-        pkl.dump(ALL_LOGS, f)
+
         
-    print("Done!")
-    print("Results are saved in: ", output_dir)
