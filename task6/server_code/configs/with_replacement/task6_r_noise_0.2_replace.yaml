@@ -20,7 +20,7 @@ MODEL:
   - 1
   ignore_warning: true
   random_seed: 1
-  replace_flag: null
+  replace_flag: true
   select_atom_percent: 0
   signal_bag_percent:
   - 0.6
