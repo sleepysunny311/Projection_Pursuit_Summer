@@ -317,7 +317,7 @@ class OMP_Augmented(AtomBaggingBase):
 class BOMP(AtomBaggingBase):
     def __init__(
         self,
-        Bag_lst = list(range(1,11)),
+        Bag_lst= list(range(1,11)),
         K_lst = list(range(1, 11)),
         signal_bag_percent=0.7,
         atom_bag_percent=1,
@@ -339,8 +339,8 @@ class BOMP(AtomBaggingBase):
         random_seed (int): Random seed
         """
 
-        self.bag_lst = Bag_lst
-        self.k_lst = K_lst
+        self.Bag_lst = Bag_lst
+        self.K_lst = K_lst
         self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
@@ -401,7 +401,7 @@ class BOMP(AtomBaggingBase):
         self.s = s
         self.phi = phi
         self.SignalBagging = SignalAtomBagging(
-            np.max(self.bag_lst),
+            np.max(self.Bag_lst),
             self.signal_bag_percent,
             self.atom_bag_percent,
             self.replace_flag,
@@ -412,29 +412,29 @@ class BOMP(AtomBaggingBase):
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
         col_idx_bag = self.SignalBagging.col_idx_bag
-        self.coefficients_cubic = np.zeros((np.max(self.bag_lst), phi.shape[1], len(self.k_lst)))
-        self.bag_k_error_matrix = np.zeros((len(self.bag_lst), 3))
+        self.coefficients_cubic = np.zeros((np.max(self.Bag_lst), phi.shape[1], len(self.K_lst)))
+        self.bag_k_error_matrix = np.zeros((len(self.Bag_lst), 3))
 
 
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
-        for i in range(np.max(self.bag_lst)):
+        for i in range(np.max(self.Bag_lst)):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
             sub_idx = col_idx_bag[i]
             self.tmpPursuitModel = OMP_Augmented(
-                self.k_lst,
+                self.K_lst,
                 self.select_atom_percent,
-                np.random.randint(10 * np.max(self.bag_lst)),
+                np.random.randint(10 * np.max(self.Bag_lst)),
                 self.ignore_warning,
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
-            real_sub_coefficients = np.zeros((phi.shape[1], len(self.k_lst)))
+            real_sub_coefficients = np.zeros((phi.shape[1], len(self.K_lst)))
             real_sub_coefficients[sub_idx, :] = self.tmpPursuitModel.coefficients_matrix
             self.coefficients_cubic[i] = real_sub_coefficients
             self.tmpPursuitModel.reset()
-            if (i+1) in self.bag_lst:
+            if (i+1) in self.Bag_lst:
                 counted_array = np.array(
                     np.unique(np.concatenate(col_idx_bag[: i + 1]), return_counts=True)
                 )
@@ -446,7 +446,7 @@ class BOMP(AtomBaggingBase):
                 temp_residual_matrix = s.reshape(-1, 1) - temp_projection_matrix
                 temp_error_series = np.mean(temp_residual_matrix ** 2, axis=0)
                 temp_optimal_idx = np.argmin(temp_error_series)
-                self.bag_k_error_matrix[self.bag_lst.index(i+1), :] = np.array([i+1, self.k_lst[temp_optimal_idx], temp_error_series[temp_optimal_idx]])
+                self.bag_k_error_matrix[self.Bag_lst.index(i+1), :] = np.array([i+1, self.K_lst[temp_optimal_idx], temp_error_series[temp_optimal_idx]])
 
         self.optimal_idx = np.argmin(self.bag_k_error_matrix[:, 2])
 
@@ -484,17 +484,17 @@ class BOMP(AtomBaggingBase):
         self.coefficients = None
         self.a = None
 
-    def set_bag_lst(self, bag_lst):
+    def set_Bag_lst(self, bag_lst):
         """
         This function is used to set the bag_lst
 
         Args:
         bag_lst (list): List of bag size
         """
-        self.bag_lst = bag_lst
+        self.Bag_lst = bag_lst
     
-    def set_k_lst(self, k_lst):
-        self.k_lst = k_lst
+    def set_K_lst(self, k_lst):
+        self.K_lst = k_lst
 
     def get_params(self, deep=True):
     # This assumes all parameters are primitives

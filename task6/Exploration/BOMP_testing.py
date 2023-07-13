@@ -66,7 +66,6 @@ def run_trials_npm_multi_noise_lvl(
         trials_loweset_cv_MSE_temp = []
         trials_testing_score_temp = []
         for trial_id in range(trial_num):
-            print("Trial: ", trial_id)
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             (
                 true_signal,
@@ -90,7 +89,7 @@ def run_trials_npm_multi_noise_lvl(
             cv_err_lst = -gs.cv_results_["mean_test_score"]
             param_lst = gs.cv_results_["params"]
             best_estimator = gs.best_estimator_
-            best_estimator.set_bag_lst([best_estimator.optimal_bag])
+            best_estimator.set_Bag_lst([best_estimator.optimal_bag])
             best_estimator.set_K_lst([best_estimator.optimal_k])
             best_estimator.fit(X_train, y_train)
             testing_error = mean_squared_error(y_test, best_estimator.predict(X_test))
@@ -158,8 +157,6 @@ def main(configs: DictConfig):
 
     # Get model parameters
     fixed_params, param_grid = get_model_params(configs)
-    print(fixed_params)
-    print(param_grid)
     timestamp = datetime.now().strftime("m%d-%H%M%S")
     filename = configs["filename"].split(".")[0] + "_" + timestamp + ".pkl"
     for n, p, m in npm_lst:
