@@ -17,7 +17,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV
 import pickle as pkl
 
-from algorithms2 import BOMP
+from algorithms import BOMP
 
 import warnings
 warnings.filterwarnings('ignore')
