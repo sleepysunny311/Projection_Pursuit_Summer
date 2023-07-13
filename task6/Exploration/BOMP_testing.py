@@ -1,74 +1,22 @@
-import argparse
-import glob
-import multiprocessing as mp
-import os
-import time
-import yaml
-import hashlib
-import json
-import pandas as pd
+import hydra
+from omegaconf import DictConfig
 import numpy as np
-from itertools import product
-from datetime import datetime
-
-import numpy as np
-from data_generation import GaussianDataGenerator
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import GridSearchCV
 import pickle as pkl
+from sklearn.model_selection import GridSearchCV
+from itertools import product
 
 from algorithms import BOMP
+from data_generation import *
+
 
 import warnings
 warnings.filterwarnings('ignore')
 
-def get_parser():
-    parser = argparse.ArgumentParser(description='Testing')
-    parser.add_argument('--config', type=str, default='configs/bomp_default.yaml', metavar= "FILE" ,help='path to config file')
-    parser.add_argument("--output", type=str, help="Output path")
-    return parser
 
 
-def get_cfg(config_file):
-    with open(config_file, 'r') as f:
-        config = yaml.safe_load(f)
-    return config
 
 
-def merge_cfg(default_dict, input_dict):
-    merged_dict = default_dict.copy()  # Start with default values.
-    sections = ['MODEL', 'TEST']  # Specify sections to update
-
-    for section in sections:
-        if section in default_dict and section in input_dict:
-            for key in default_dict[section]:
-                # Check if the key is in the user input dictionary
-                if key in input_dict[section]:
-                    # If it is, update the merged dictionary
-                    merged_dict[section][key] = input_dict[section][key]
-                else:
-                    # If not, print a message about using the default value
-                    print(f"Missing parameter '{key}' in section '{section}', default value '{default_dict[section][key]}' will be used.")
-        else:
-            print(f"Missing section '{section}' in the user input, default values will be used.")
-
-    # Check for invalid keys in the user input dictionary
-    for section in input_dict:
-        if section in sections:
-            for key in input_dict[section]:
-                if key not in default_dict[section]:
-                    print(f"Invalid key '{key}' in section '{section}'. This key will be ignored.")
-    return merged_dict
     
-def get_output_path(output_path, config_filename):
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    if output_path is None:
-        output_path = "./memory"
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    # output file will be a pickle file in the specified folder
-    output_path = os.path.join(output_path, config_filename.split("/")[-1].split(".")[0] + timestamp + ".pkl")
-    return output_path    
 
 def get_model_params(config):
     all_params = config['MODEL']
@@ -164,19 +112,18 @@ def run_tests(config, output_path):
     print("Results are saved in: ", output_path)
     return ALL_LOGS
 
-if __name__ == '__main__':
-    parser = get_parser()
-    args = parser.parse_args()
-    
-    # Merge default config and input config
-    default_config = get_cfg("configs/bomp_default.yaml")
-    input_config = get_cfg(args.config)
-    full_config = merge_cfg(default_config, input_config)
-    
-    # Output folder for the current config file
-    output_dir = get_output_path(args.output, args.config)
+@hydra.main(config_path='config', config_name='bomp_default.yaml')
+def main():
 
-    _ = run_tests(full_config, output_dir)
+    
+
+
+
+
+
+if __name__ == '__main__':
+
+    main()
     
 
         
