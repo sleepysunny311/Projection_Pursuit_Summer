@@ -110,9 +110,6 @@ class AtomBaggingBase(BaseEstimator):
         self.random_seed = random_seed
         self.ignore_warning = ignore_warning
 
-    def fit(self, phi, s):
-        pass
-
     def reset(self):
         self.indices = []
         self.s = None
@@ -242,7 +239,7 @@ class OMP_Augmented(AtomBaggingBase):
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
-        for k in range(np.max(self.K_lst)+1):
+        for k in range(np.max(self.K_lst) + 1):
             inner_products = (phi.T @ self.r).flatten()
             # so that we will not select the same atom
             inner_products[self.indices] = 0
@@ -281,12 +278,11 @@ class OMP_Augmented(AtomBaggingBase):
                 self.coefficients_matrix[:, self.K_lst.index(k)] = self.coefficients
                 self.error_series.append(np.sum(self.r**2))
 
-
         minimal_k_index = np.argmin(self.error_series)
 
         # Update Coefficients
 
-        self.coefficients = self.coefficients_matrix[:,minimal_k_index]
+        self.coefficients = self.coefficients_matrix[:, minimal_k_index]
 
         # Update Projection
         self.a = phi @ self.coefficients
@@ -309,13 +305,14 @@ class OMP_Augmented(AtomBaggingBase):
         test_score = []
         projection_matrix = phi_test @ self.coefficients_matrix
         residual_matrix = s_test.reshape(-1, 1) - projection_matrix
-        test_score = np.mean(residual_matrix**2,axis = 0)
+        test_score = np.mean(residual_matrix**2, axis=0)
         return test_score
 
     def reset(self):
         super().reset()
         self.coefficients_matrix = None
         self.error_series = []
+
 
 class BOMP(AtomBaggingBase):
     def __init__(
@@ -342,7 +339,7 @@ class BOMP(AtomBaggingBase):
         random_seed (int): Random seed
         """
         self.N_bag = N_bag
-        self.K_lst = K_lst
+        self.k_lst = K_lst
         self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
@@ -356,11 +353,8 @@ class BOMP(AtomBaggingBase):
             K_lst, select_atom_percent, random_seed, ignore_warning
         )
         self.SignalBagging = None
-        self.coefficients_lst = []
-        self.mse_lst = []
         self.coefficients = None
         self.a = None
-        self.bag_k_lst = []
 
     def agg_weight_with_error(self, c_lst, mse_lst):
         """
@@ -395,13 +389,12 @@ class BOMP(AtomBaggingBase):
         return tot / len(c_lst)
 
     def fit(self, phi, s):
-        #FIXME:: Prepare BOMP for testing
-        
         """
         Args:
         s (numpy.ndarray): Input signal
         phi (numpy.ndarray): Dictionary
         """
+
         self.reset()
 
         self.s = s
@@ -414,38 +407,61 @@ class BOMP(AtomBaggingBase):
             self.random_seed,
         )
         self.SignalBagging.fit(self.phi, self.s)
-
+        self.coefficients_matrix = None
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
         col_idx_bag = self.SignalBagging.col_idx_bag
         self.coefficients_cubic = np.zeros((self.N_bag, phi.shape[1], len(self.k_lst)))
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
 
         for i in range(self.N_bag):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
             sub_idx = col_idx_bag[i]
             self.tmpPursuitModel = OMP_Augmented(
-                self.K_lst,
+                self.k_lst,
                 self.select_atom_percent,
-                np.random.randint(10000),
+                np.random.randint(10 * self.N_bag),
                 self.ignore_warning,
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
-            real_sub_coefficients = np.zeros((phi.shape[1], len(self.K_lst)))
-            real_sub_coefficients[:,sub_idx] = np.array(self.tmpPursuitModel.coefficients_list)
+            real_sub_coefficients = np.zeros((phi.shape[1], len(self.k_lst)))
+            real_sub_coefficients[sub_idx, :] = self.tmpPursuitModel.coefficients_matrix
             self.coefficients_cubic[i] = real_sub_coefficients
             self.tmpPursuitModel.reset()
-        self.coefficients_per_k = self.coefficients_cubic.mean(axis=0)
+        counted_array = np.array(
+            np.unique(np.concatenate(col_idx_bag), return_counts=True)
+        )
+        idx_count = counted_array[1, np.argsort(counted_array[0])]
+        self.coefficients_matrix = (
+            (self.coefficients_cubic.sum(axis=0).T) / idx_count
+        ).T
+        projection_matrix = phi @ self.coefficients_matrix
+        residual_matrix = s.reshape(-1, 1) - projection_matrix
+        self.error_series = np.mean(residual_matrix**2, axis=0)
 
-        self.a = self.phi @ self.coefficients
+        self.optimal_k = np.argmin(self.error_series)
+
+        # Update Coefficients
+        self.coefficients = self.coefficients_matrix[:, self.optimal_k]
+
+        # Update Projection
+        self.a = phi @ self.coefficients
+
+        # Update Residual
+        self.r = self.s - self.a
+
+        return self.a, self.coefficients
 
     def reset(self):
         """
         This function is used to reset the model
         """
         super().reset()
-        self.coefficients_lst = []
-        self.mse_lst = []
+        self.coefficients_matrix = None
+        self.coefficients_cubic = None
+        self.error_series = []
         self.coefficients = None
         self.a = None
-        self.bag_k_lst = []
