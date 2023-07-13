@@ -317,8 +317,8 @@ class OMP_Augmented(AtomBaggingBase):
 class BOMP(AtomBaggingBase):
     def __init__(
         self,
-        Bag_lst = list(range(1, 101)),
-        K_lst=list(range(1, 21)),
+        Bag_lst = list(range(1,11)),
+        K_lst = list(range(1, 11)),
         signal_bag_percent=0.7,
         atom_bag_percent=1,
         select_atom_percent=0,
@@ -338,6 +338,7 @@ class BOMP(AtomBaggingBase):
         agg_func (str): Aggregation function
         random_seed (int): Random seed
         """
+
         self.bag_lst = Bag_lst
         self.k_lst = K_lst
         self.signal_bag_percent = signal_bag_percent
@@ -482,3 +483,34 @@ class BOMP(AtomBaggingBase):
         self.error_series = []
         self.coefficients = None
         self.a = None
+
+    def set_bag_lst(self, bag_lst):
+        """
+        This function is used to set the bag_lst
+
+        Args:
+        bag_lst (list): List of bag size
+        """
+        self.bag_lst = bag_lst
+    
+    def set_k_lst(self, k_lst):
+        self.k_lst = k_lst
+
+    def get_params(self, deep=True):
+    # This assumes all parameters are primitives
+        return {
+            "Bag_lst": self.Bag_lst,
+            "K_lst": self.K_lst,
+            "signal_bag_percent": self.signal_bag_percent,
+            "atom_bag_percent": self.atom_bag_percent,
+            "select_atom_percent": self.select_atom_percent,
+            "replace_flag": self.replace_flag,
+            "agg_func": self.agg_func,
+            "random_seed": self.random_seed,
+            "ignore_warning": self.ignore_warning,
+        }
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self

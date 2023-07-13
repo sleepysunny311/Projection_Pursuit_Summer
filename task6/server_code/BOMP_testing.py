@@ -133,7 +133,6 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
     return res_log_npm
 
 def run_tests(config, output_path):
-    # TODO: Implement this function
     n_tmp = config['TEST']['n']
     p_tmp = config['TEST']['p']
     m_tmp = config['TEST']['m']
