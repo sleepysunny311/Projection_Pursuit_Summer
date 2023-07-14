@@ -129,11 +129,11 @@ class AtomBaggingBase(BaseEstimator):
         Returns:
         numpy.ndarray: Predicted output
         """
+        return (phi_test @ self.coefficients).reshape(-1, 1)
 
-        return phi_test @ self.coefficients
-
-    def score(self, s_test, phi_test):
-        s_pred = phi_test @ self.final_c
+    def score(self, phi_test, s_test):
+        # return self.coefficients
+        s_pred = phi_test @ self.coefficients
         pred_mse = np.mean((s_pred - s_test) ** 2)
         return pred_mse
 
@@ -235,7 +235,7 @@ class OMP_Augmented(AtomBaggingBase):
         self.r = self.s.copy()
 
         self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
-
+        self.error_series = []
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
@@ -413,6 +413,7 @@ class BOMP(AtomBaggingBase):
         phi_bag = self.SignalBagging.phi_bag
         col_idx_bag = self.SignalBagging.col_idx_bag
         self.coefficients_cubic = np.zeros((np.max(self.Bag_lst), phi.shape[1], len(self.K_lst)))
+        self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
         self.bag_k_error_matrix = np.zeros((len(self.Bag_lst), 3))
 
 
@@ -432,16 +433,20 @@ class BOMP(AtomBaggingBase):
             self.tmpPursuitModel.fit(sub_phi, sub_s)
             real_sub_coefficients = np.zeros((phi.shape[1], len(self.K_lst)))
             real_sub_coefficients[sub_idx, :] = self.tmpPursuitModel.coefficients_matrix
-            self.coefficients_cubic[i] = real_sub_coefficients
+            self.coefficients_cubic[i,:,:] = real_sub_coefficients
             self.tmpPursuitModel.reset()
             if (i+1) in self.Bag_lst:
                 counted_array = np.array(
                     np.unique(np.concatenate(col_idx_bag[: i + 1]), return_counts=True)
                 )
-                idx_count = counted_array[1, np.argsort(counted_array[0])]
-                temp_coefficients_matrix = (
-                    (self.coefficients_cubic.sum(axis=0).T) / idx_count
-                ).T
+                temp_coefficients_matrix = self.coefficients_cubic.sum(axis=0)
+                counted_array = counted_array[:,np.argsort(counted_array[0])]
+                filled_array = np.zeros_like(phi[0])
+
+                if (counted_array.shape[1] < phi.shape[1]):
+                    temp_coefficients_matrix[counted_array[0, :], :] = ((temp_coefficients_matrix[counted_array[0, :], :]).T/ counted_array[1, :]).T
+                else:
+                    temp_coefficients_matrix = ((temp_coefficients_matrix).T/ counted_array[1, :]).T
                 temp_projection_matrix = phi @ temp_coefficients_matrix
                 temp_residual_matrix = s.reshape(-1, 1) - temp_projection_matrix
                 temp_error_series = np.mean(temp_residual_matrix ** 2, axis=0)
@@ -458,19 +463,21 @@ class BOMP(AtomBaggingBase):
         counted_array = np.array(
             np.unique(np.concatenate(col_idx_bag[: self.optimal_bag]), return_counts=True)
         )
+        temp_coefficients_matrix = self.coefficients_cubic.sum(axis=0)
+        counted_array = counted_array[:,np.argsort(counted_array[0])]
+        filled_array = np.zeros_like(phi[0])
+        if (counted_array.shape[1] < phi.shape[1]):
+            self.coefficients_matrix[counted_array[0, :], :] = ((temp_coefficients_matrix[counted_array[0, :], :]).T/ counted_array[1, :]).T
+        else:
+            self.coefficients_matrix = ((temp_coefficients_matrix).T/ counted_array[1, :]).T
 
-        idx_count = counted_array[1, np.argsort(counted_array[0])]
-        self.coefficients_matrix = (
-            (self.coefficients_cubic[: self.optimal_bag].sum(axis=0).T) / idx_count
-        ).T
-        self.coefficients = self.coefficients_matrix[:, self.optimal_idx]
+        self.coefficients = self.coefficients_matrix[:, self.K_lst.index(self.optimal_k)]
 
         # Update Projection
         self.a = phi @ self.coefficients
 
         # Update Residual
         self.r = self.s - self.a
-
         return self.a, self.coefficients
 
     def reset(self):
