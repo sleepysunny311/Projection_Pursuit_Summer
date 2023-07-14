@@ -40,7 +40,7 @@ def dump_single_res(res_log_npm, filename):
     ready_to_dump = (len(res_log_npm['log'])>0) | (len(res_log_npm['noise_level_lowest_cv_MSE'])>0)
     if ready_to_dump:
         if local_file_exists:
-            with open(filename, "r") as f:
+            with open(filename, "rb") as f:
                 local_log_lists = pkl.load(f)
                 local_log = local_log_lists[-1]
                 if local_log["hash"] == res_log_npm["hash"]:
@@ -64,7 +64,7 @@ def dump_single_res(res_log_npm, filename):
     return res_log_npm
 
 def get_model_params(config):
-    all_params = OmegaConf.to_container(config, resolve=True)["MODEL"]
+    all_params = config["MODEL"]
     param_grid = {}
     fixed_params = {}
 
@@ -109,6 +109,9 @@ def run_trials_npm_multi_noise_lvl(
         "trials_testing_score": [],
         "log": [],
     }
+    # print(type(res_log_npm))
+    # for key, value in res_log_npm.items():
+    #     print(type(value))
     res_log_npm["hash"] = hash_encode(res_log_npm["parameters"])
     print(f"Running trials for n = {n}, p = {p}, m = {m}")
     for noise_level in noise_level_lst:
@@ -180,6 +183,7 @@ def run_trials_npm_multi_noise_lvl(
 
 @hydra.main(config_path="configs", config_name="bomp_default.yaml")
 def main(configs: DictConfig):
+    configs = OmegaConf.to_container(configs, resolve=True)
     n_tmp = configs["TEST"]["n"]
     p_tmp = configs["TEST"]["p"]
     m_tmp = configs["TEST"]["m"]
@@ -203,7 +207,7 @@ def main(configs: DictConfig):
 
     # Get model parameters
     fixed_params, param_grid = get_model_params(configs)
-    timestamp = datetime.now().strftime("m%d-%H%M%S")
+    timestamp = datetime.now().strftime("%m%d-%H%M%S")
     filename = configs["filename"].split(".")[0] + "_" + timestamp + ".pkl"
     for n, p, m in npm_lst:
         ALL_LOGS = None
