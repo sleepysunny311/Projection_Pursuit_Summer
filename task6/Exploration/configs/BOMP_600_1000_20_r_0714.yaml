@@ -63,7 +63,7 @@ TEST:
   noise_levels:
   - 0.05
   p: 1000
-  trial_num: 2
+  trial_num: 20
 filename: BOMP_600_1000_20_r_0714.yaml
 hydra:
   hydra_logging:
