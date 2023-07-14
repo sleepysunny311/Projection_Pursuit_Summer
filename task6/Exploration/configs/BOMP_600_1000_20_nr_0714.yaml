@@ -39,12 +39,12 @@ TEST:
   noise_levels:
   - 0.12
   p: 1000
-  trial_num: 20
-filename: BOMP_600_1000_20_nr_0713.yaml
+  trial_num: 2
+filename: BOMP_600_1000_20_nr_0714.yaml
 hydra:
   hydra_logging:
     level: CRITICAL
   job_logging:
     level: CRITICAL
   run:
-    dir: memory/0713/
+    dir: memory/0714/

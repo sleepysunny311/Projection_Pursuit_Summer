@@ -57,7 +57,8 @@ def run_trials_npm_multi_noise_lvl(
             "param_grid": param_grid,
             "fixed_params": fixed_params,
         },
-        "noise_level_lowest_MSE": [],
+        "noise_level_lowest_cv_MSE": [],
+        "trials_testing_score": [],
         "log": [],
     }
     print(f"Running trials for n = {n}, p = {p}, m = {m}")
@@ -97,16 +98,17 @@ def run_trials_npm_multi_noise_lvl(
             lowest_cv_error = np.min(cv_err_lst)
             trials_loweset_cv_MSE_temp.append(lowest_cv_error)
             best_params = gs.best_params_
+            best_params["best_bag"] = best_estimator.optimal_bag
+            best_params["best_k"] = best_estimator.optimal_k
             reslog_one_trial = {
                 "noise_level": noise_level,
                 "trial": trial_id,
                 "cv_error_lst": cv_err_lst,
                 "lowest_cv_error": lowest_cv_error,
                 "best_params": best_params,
-                "best_bag": best_estimator.optimal_bag,
-                "best_k": best_estimator.optimal_k,
                 "param_lst": param_lst,
                 "testing_error": testing_error,
+                "best_bag_k_error_matrix": best_estimator.bag_k_error_matrix,
             }
             res_log_npm["log"].append(reslog_one_trial)
             print(
