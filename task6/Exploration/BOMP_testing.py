@@ -56,7 +56,7 @@ def dump_single_res(res_log_npm, filename):
             pkl.dump(local_log_lists, f)
         dumped_log = len(res_log_npm['log'])
         dumped_error = len(res_log_npm['noise_level_lowest_cv_MSE'])
-        print(f"Dumped {dumped_log} logs and {dumped_error} errors")
+        #print(f"Dumped {dumped_log} logs and {dumped_error} errors")
         res_log_npm = clear_log(res_log_npm)
     else:
         print("Nothing to dump")
