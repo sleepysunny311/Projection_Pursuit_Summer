@@ -6,6 +6,9 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import mean_squared_error
 from itertools import product
 from datetime import datetime
+import json
+import hashlib
+import os
 from algorithms import BOMP
 from data_generation import *
 
@@ -14,6 +17,51 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+
+def hash_encode(dictionary):
+    # Convert dictionary to JSON string
+    dictionary = dict(sorted(dictionary.items()))
+    json_str = json.dumps(dictionary, sort_keys=True)
+
+    # Generate hash from JSON string
+    hash_object = hashlib.md5(json_str.encode())
+    hash_value = hash_object.hexdigest()
+    return hash_value
+
+def clear_log(res_log_npm):
+    res_log_npm["log"] = []
+    res_log_npm["noise_level_lowest_cv_MSE"] = []
+    res_log_npm["trials_testing_score"] = []
+    return res_log_npm
+
+def dump_single_res(res_log_npm, filename):
+    local_file_exists = os.path.isfile(filename)
+    local_log = None
+    ready_to_dump = (len(res_log_npm['log'])>0) | (len(res_log_npm['noise_level_lowest_cv_MSE'])>0)
+    if ready_to_dump:
+        if local_file_exists:
+            with open(filename, "r") as f:
+                local_log_lists = pkl.load(f)
+                local_log = local_log_lists[-1]
+                if local_log["hash"] == res_log_npm["hash"]:
+                    local_log['log'] = local_log['log'] + res_log_npm['log']
+                    local_log['noise_level_lowest_cv_MSE'] = local_log['noise_level_lowest_cv_MSE'] + res_log_npm['noise_level_lowest_cv_MSE']
+                    local_log['trials_testing_score'] = local_log['trials_testing_score'] + res_log_npm['trials_testing_score']
+                    local_log_lists[-1] = local_log
+                else:
+                    local_log_lists.append(res_log_npm)
+        else:
+            local_log_lists = [res_log_npm]
+        with open(filename, "wb") as f:
+            pkl.dump(local_log_lists, f)
+        dumped_log = len(res_log_npm['log'])
+        dumped_error = len(res_log_npm['noise_level_lowest_cv_MSE'])
+        print(f"Dumped {dumped_log} logs and {dumped_error} errors")
+        res_log_npm = clear_log(res_log_npm)
+    else:
+        print("Nothing to dump")
+
+    return res_log_npm
 
 def get_model_params(config):
     all_params = OmegaConf.to_container(config, resolve=True)["MODEL"]
@@ -38,7 +86,7 @@ def get_model_params(config):
 
 
 def run_trials_npm_multi_noise_lvl(
-    n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num
+    n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num, filename
 ):
     # get the model
 
@@ -61,6 +109,7 @@ def run_trials_npm_multi_noise_lvl(
         "trials_testing_score": [],
         "log": [],
     }
+    res_log_npm["hash"] = hash_encode(res_log_npm["parameters"])
     print(f"Running trials for n = {n}, p = {p}, m = {m}")
     for noise_level in noise_level_lst:
         print("Cross validating alpha under noise level: ", noise_level)
@@ -121,17 +170,12 @@ def run_trials_npm_multi_noise_lvl(
                 " Testing Error: ",
                 testing_error,
             )
+            res_log_npm = dump_single_res(res_log_npm, filename)
         res_log_npm["noise_level_lowest_cv_MSE"].append(
             np.mean(trials_loweset_cv_MSE_temp)
         )
         res_log_npm["trials_testing_score"].append(np.mean(trials_testing_score_temp))
-        print(
-            "Noise level: ",
-            noise_level,
-            " Avg Testing Lowest MSE: ",
-            np.mean(trials_testing_score_temp),
-        )
-    return res_log_npm
+        res_log_npm = dump_single_res(res_log_npm, filename)
 
 
 @hydra.main(config_path="configs", config_name="bomp_default.yaml")
@@ -173,17 +217,8 @@ def main(configs: DictConfig):
             param_grid,
             cv_num,
             trial_num,
+            filename
         )
-        ALL_LOGS = None
-        try:
-            with open(filename, "rb") as f:
-                ALL_LOGS = pkl.load(f)
-        except:
-            ALL_LOGS = []
-
-        ALL_LOGS.append(reslog_npm)
-        with open(filename, "wb") as f:
-            pkl.dump(ALL_LOGS, f)
 
     print("Done!")
     print("Results are saved in: ", filename)
