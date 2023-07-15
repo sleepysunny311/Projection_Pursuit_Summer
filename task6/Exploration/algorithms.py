@@ -451,7 +451,9 @@ class BOMP(AtomBaggingBase):
                 temp_residual_matrix = s.reshape(-1, 1) - temp_projection_matrix
                 temp_error_series = np.mean(temp_residual_matrix ** 2, axis=0)
                 temp_optimal_idx = np.argmin(temp_error_series)
+                
                 self.bag_k_error_matrix[self.Bag_lst.index(i+1), :] = np.array([i+1, self.K_lst[temp_optimal_idx], temp_error_series[temp_optimal_idx]])
+
 
         self.optimal_idx = np.argmin(self.bag_k_error_matrix[:, 2])
 
@@ -478,6 +480,7 @@ class BOMP(AtomBaggingBase):
 
         # Update Residual
         self.r = self.s - self.a
+        print(self.bag_k_error_matrix)
         return self.a, self.coefficients
 
     def reset(self):
