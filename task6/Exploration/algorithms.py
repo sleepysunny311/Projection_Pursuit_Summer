@@ -206,7 +206,7 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
 
 class OMP_Augmented(AtomBaggingBase):
     def __init__(
-        self, K_lst, select_atom_percent=0, random_seed=None, ignore_warning=False
+        self, K_lst=list(range(1,21,1)), select_atom_percent=0, random_seed=None, ignore_warning=False
     ):
         self.K_lst = K_lst
         self.random_seed = random_seed
@@ -235,7 +235,7 @@ class OMP_Augmented(AtomBaggingBase):
         self.r = self.s.copy()
 
         self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
-        self.error_series = []
+        self.error_series = np.zeros(len(self.K_lst))
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
@@ -265,20 +265,21 @@ class OMP_Augmented(AtomBaggingBase):
             # Update indices
             self.indices.append(lambda_k)
 
+
+            ## FIXME:: Lazy David found that you can skip determining the optimal k and calculate the error with the whole matrix with the right indexing
             # Update Coefficients
-            self.coefficients = np.zeros(phi.shape[1])
-            self.coefficients[self.indices] = betas.flatten()
+            temp_coefficients_vector = np.zeros(phi.shape[1])
+            temp_coefficients_vector[self.indices] = betas.flatten()
+            temp_projection_vector = phi @ temp_coefficients_vector
+            temp_residual_vector = self.s - temp_projection_vector
 
-            # Update Projection
-            self.a = X @ betas
-
-            # Update Residual
-            self.r = self.s - self.a
             if (k+1) in self.K_lst:
-                self.coefficients_matrix[:, self.K_lst.index(k+1)] = self.coefficients
-                self.error_series.append(np.sum(self.r**2))
+                self.coefficients_matrix[:, self.K_lst.index(k+1)] = temp_coefficients_vector
+                self.error_series[self.K_lst.index(k+1)] = np.mean(temp_residual_vector**2)
 
         minimal_k_index = np.argmin(self.error_series)
+
+        self.optimal_k = self.K_lst[minimal_k_index]
 
         # Update Coefficients
 
@@ -312,6 +313,9 @@ class OMP_Augmented(AtomBaggingBase):
         super().reset()
         self.coefficients_matrix = None
         self.error_series = []
+
+    def set_K_lst(self, K_lst):
+        self.K_lst = K_lst
 
 
 class BOMP(AtomBaggingBase):
