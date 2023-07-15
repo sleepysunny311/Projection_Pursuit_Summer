@@ -1,5 +1,5 @@
-import hydra
-from omegaconf import DictConfig, OmegaConf
+import argparse
+import yaml
 import numpy as np
 import pickle as pkl
 from sklearn.model_selection import GridSearchCV, train_test_split
@@ -16,6 +16,14 @@ from data_generation import *
 import warnings
 
 warnings.filterwarnings("ignore")
+
+def get_parser():
+    parser = argparse.ArgumentParser(description='Testing')
+    parser.add_argument('--config-name', type=str)
+    parser.add_argument('--config-path', type=str)
+    parser.add_argument('--output-path', type=str)
+    return parser
+
 
 
 def hash_encode(dictionary):
@@ -181,9 +189,24 @@ def run_trials_npm_multi_noise_lvl(
         res_log_npm = dump_single_res(res_log_npm, filename)
 
 
-@hydra.main(config_path="configs", config_name="bomp_default.yaml")
-def main(configs: DictConfig):
-    configs = OmegaConf.to_container(configs, resolve=True)
+
+
+
+
+if __name__ == "__main__":
+    args = get_parser().parse_args()
+    configs = None
+    with open(os.path.join(args.config_path, args.config_name), "r") as f:
+        configs = yaml.load(f, Loader=yaml.FullLoader)
+    out_path = args.output_path
+    try:
+        os.makedirs(out_path)
+    except TypeError:
+        out_path = "./memory"
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+
+
     n_tmp = configs["TEST"]["n"]
     p_tmp = configs["TEST"]["p"]
     m_tmp = configs["TEST"]["m"]
@@ -209,8 +232,8 @@ def main(configs: DictConfig):
     fixed_params, param_grid = get_model_params(configs)
     timestamp = datetime.now().strftime("%m%d-%H%M%S")
     filename = configs["filename"].split(".")[0] + "_" + timestamp + ".pkl"
+    filename = os.path.join(out_path, filename)
     for n, p, m in npm_lst:
-        ALL_LOGS = None
         reslog_npm = run_trials_npm_multi_noise_lvl(
             n,
             p,
@@ -226,8 +249,3 @@ def main(configs: DictConfig):
 
     print("Done!")
     print("Results are saved in: ", filename)
-    return ALL_LOGS
-
-
-if __name__ == "__main__":
-    main()
