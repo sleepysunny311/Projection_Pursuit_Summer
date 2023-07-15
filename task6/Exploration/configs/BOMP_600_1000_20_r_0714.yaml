@@ -65,3 +65,4 @@ TEST:
   p: 1000
   trial_num: 20
 filename: BOMP_600_1000_20_r_0714.yaml
+output_path: memory/0714/
