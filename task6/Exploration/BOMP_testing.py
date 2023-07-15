@@ -150,6 +150,7 @@ def run_trials_npm_multi_noise_lvl(
             cv_err_lst = -gs.cv_results_["mean_test_score"]
             param_lst = gs.cv_results_["params"]
             best_estimator = gs.best_estimator_
+            old_bag_k_error_matrix = best_estimator.bag_k_error_matrix
             best_estimator.set_Bag_lst([best_estimator.optimal_bag])
             best_estimator.set_K_lst([best_estimator.optimal_k])
             best_estimator.fit(X_train, y_train)
@@ -168,7 +169,7 @@ def run_trials_npm_multi_noise_lvl(
                 "best_params": best_params,
                 "param_lst": param_lst,
                 "testing_error": testing_error,
-                "best_bag_k_error_matrix": best_estimator.bag_k_error_matrix,
+                "best_bag_k_error_matrix": old_bag_k_error_matrix,
             }
             res_log_npm["log"].append(reslog_one_trial)
             print(
