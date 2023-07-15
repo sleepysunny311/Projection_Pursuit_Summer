@@ -2,19 +2,56 @@ MODEL:
   Bag_lst:
   - 1
   - 50
+  - 100
+  - 200
+  - 300
   K_lst:
   - 10
+  - 20
+  - 30
+  - 40
+  - 50
+  - 60
+  - 70
+  - 80
+  - 90
+  - 100
+  - 110
+  - 120
+  - 130
+  - 140
+  - 150
+  - 160
+  - 170
+  - 180
+  - 190
+  - 200
+  - 210
+  - 220
+  - 230
+  - 240
+  - 250
+  - 260
+  - 270
+  - 280
+  - 290
   agg_func: weight
   atom_bag_percent:
   - 0.1
-  - 0.2
+  - 0.3
+  - 0.5
+  - 0.7
+  - 0.9
   ignore_warning: true
   random_seed: 1
   replace_flag: false
   select_atom_percent: 0
   signal_bag_percent:
   - 0.1
-  - 0.2
+  - 0.3
+  - 0.5
+  - 0.7
+  - 0.9
 TEST:
   cv_num: 5
   m: 20
