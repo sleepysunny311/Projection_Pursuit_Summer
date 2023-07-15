@@ -5,7 +5,7 @@
 #SBATCH -t 5-00:00
 #SBATCH -C mem192
 #SBATCH --mail-type=ALL 
-#SBATCH --mail-user=sz3091@columbia.edu
+#SBATCH --mail-user=ts3464@columbia.edu
 
 module load anaconda
 #Command to execute Python program

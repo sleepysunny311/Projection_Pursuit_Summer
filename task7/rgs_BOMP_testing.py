@@ -71,20 +71,28 @@ def get_output_path(output_path, config_filename):
     return output_path    
 
 def get_model_params(config):
+    import numpy as np
     all_params = config['MODEL']
     param_grid = {}
     fixed_params = {}
-
-    K_lst = all_params['K_lst']
-    del all_params['K_lst']
-
+    K_start, K_end, K_step = all_params['K_start'], all_params['K_end'], all_params['K_step']
+    if K_start >= K_end:
+        raise ValueError("K_start must be smaller than K_end")
+    if K_step <= 0:
+        raise ValueError("K_step must be positive")
+    # Check if K_start, K_end, K_step are integers
+    if not isinstance(K_start, int) or not isinstance(K_end, int) or not isinstance(K_step, int):
+        raise ValueError("K_start, K_end, K_step must be integers")
+    K_list = np.arange(K_start, K_end, K_step, dtype=int)
+    # Check if the param is a list or a single value if it is a list save to param_grid or else save to fixed_params
     for param, value in all_params.items():
+        if param in ['K_start', 'K_end', 'K_step']:
+            continue
         if isinstance(value, list):
             param_grid[param] = value
         else:
             fixed_params[param] = value
-    
-    fixed_params['K_lst'] = K_lst
+    param_grid['K'] = K_list
     return fixed_params, param_grid
     
 def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
@@ -99,7 +107,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
         'trials_testing_score': [],
         'log': []
     }
-    print(f"Running trials for n = {n}, p = {p}, m = {m}")
+
     for noise_level in noise_level_lst:
         print("Cross validating alpha under noise level: ", noise_level)
         trials_loweset_cv_MSE_temp = []
@@ -108,8 +116,8 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
             X_train, X_test, y_train, y_test = train_test_split(dictionary, perturbed_signal, test_size=0.2, random_state=trial_id) 
-            gs = RandomizedSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, n_iter=100)
-            gs.fit(X_train, X_test)
+            gs = RandomizedSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, n_iter=100, verbose = 2)
+            gs.fit(X_train, y_train)
             cv_err_lst = -gs.cv_results_['mean_test_score']
             param_lst = gs.cv_results_['params']
             best_estimator = gs.best_estimator_
@@ -129,7 +137,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
         print("Noise level: ", noise_level, " Avg Lowest MSE: ", np.mean(trials_loweset_cv_MSE_temp))
     return res_log_npm
 
-def run_tests(config, output_path):
+def run_tests(config):
     n_tmp = config['TEST']['n']
     p_tmp = config['TEST']['p']
     m_tmp = config['TEST']['m']
@@ -154,23 +162,13 @@ def run_tests(config, output_path):
     # Get model parameters
     fixed_params, param_grid = get_model_params(config)
     
+    # Start running the tests
+    ALL_LOGS = []
     
     for n, p, m in npm_lst:
-        ALL_LOGS = None
         reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num)
-        ALL_LOGS = None
-        try:
-            with open(output_path, 'rb') as f:
-                ALL_LOGS = pkl.load(f)
-        except:
-            ALL_LOGS = []
-
         ALL_LOGS.append(reslog_npm)
-        with open(output_path, 'wb') as f:
-            pkl.dump(ALL_LOGS, f)
-
-    print("Done!")
-    print("Results are saved in: ", output_path)
+        
     return ALL_LOGS
 
 if __name__ == '__main__':
@@ -185,7 +183,10 @@ if __name__ == '__main__':
     # Output folder for the current config file
     output_dir = get_output_path(args.output, args.config)
 
-    _ = run_tests(full_config, output_dir)
+    ALL_LOGS = run_tests(full_config)
     
-
+    with open(output_dir, 'wb') as f:
+        pkl.dump(ALL_LOGS, f)
         
+    print("Done!")
+    print("Results are saved in: ", output_dir)
