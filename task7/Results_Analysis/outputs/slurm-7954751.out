@@ -1,0 +1,24 @@
+Running trials for n = 600, p = 1000, m = 20
+Cross validating alpha under noise level:  0.1
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 200, 'best_k': 190}  Lowest Error:  0.014230071132970378  Testing Error:  0.010646066045377881
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 220}  Lowest Error:  0.012447523853222169  Testing Error:  0.01057846858483667
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.9, 'best_bag': 300, 'best_k': 240}  Lowest Error:  0.014093636308057905  Testing Error:  0.012440744299424496
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 1.1, 'best_bag': 300, 'best_k': 260}  Lowest Error:  0.014150543851621015  Testing Error:  0.016168778798768917
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.9, 'best_bag': 300, 'best_k': 260}  Lowest Error:  0.014712618298512451  Testing Error:  0.016489505419364867
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 190}  Lowest Error:  0.012558539971451501  Testing Error:  0.013725569259140055
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.9, 'best_bag': 300, 'best_k': 240}  Lowest Error:  0.014218142961666767  Testing Error:  0.015084613792442792
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 180}  Lowest Error:  0.01510264858385169  Testing Error:  0.016896870673675055
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 300, 'best_k': 160}  Lowest Error:  0.012881510390454076  Testing Error:  0.01406535084768048
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 180}  Lowest Error:  0.013006353937761362  Testing Error:  0.0122032597558093
+Trial:  10  Best params:  {'atom_bag_percent': 0.3, 'signal_bag_percent': 0.5, 'best_bag': 300, 'best_k': 10}  Lowest Error:  0.012674609454111576  Testing Error:  0.013596866824701794
+Trial:  11  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 200, 'best_k': 160}  Lowest Error:  0.013136288136342749  Testing Error:  0.011952835673363242
+Trial:  12  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 200}  Lowest Error:  0.011798663840909296  Testing Error:  0.01653911656532315
+Trial:  13  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 210}  Lowest Error:  0.013353226607643428  Testing Error:  0.010221667713351685
+Trial:  14  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.9, 'best_bag': 300, 'best_k': 230}  Lowest Error:  0.014661384187318946  Testing Error:  0.012565599856262691
+Trial:  15  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 210}  Lowest Error:  0.01352437796305978  Testing Error:  0.013526095267268135
+Trial:  16  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 300, 'best_k': 170}  Lowest Error:  0.013653747301659793  Testing Error:  0.010626479618462676
+Trial:  17  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 200}  Lowest Error:  0.014740902507477985  Testing Error:  0.013639105742344644
+Trial:  18  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 190}  Lowest Error:  0.012173326948664074  Testing Error:  0.012508216634931837
+Trial:  19  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 300, 'best_k': 190}  Lowest Error:  0.013687420628177524  Testing Error:  0.014851863062345028
+Done!
+Results are saved in:  ./memory/BOMP_600_1000_20_r_0715_0715-222002.pkl

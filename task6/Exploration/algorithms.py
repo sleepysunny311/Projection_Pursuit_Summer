@@ -484,7 +484,6 @@ class BOMP(AtomBaggingBase):
 
         # Update Residual
         self.r = self.s - self.a
-        print(self.bag_k_error_matrix)
         return self.a, self.coefficients
 
     def reset(self):
