@@ -134,7 +134,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             print("Trial: ", trial_id, " Best params: ", best_params, " Lowest Error: ", lowest_cv_error, " Testing Error: ", testing_error)
         res_log_npm['noise_level_lowest_cv_MSE'].append(np.mean(trials_loweset_cv_MSE_temp))
         res_log_npm['trials_testing_score'].append(np.mean(trials_testing_score_temp))
-        print("Noise level: ", noise_level, " Avg Lowest MSE: ", np.mean(trials_loweset_cv_MSE_temp))
+        print("Noise level: ", noise_level, " Avg Training Score: ", np.mean(trials_loweset_cv_MSE_temp), ' Avg Testing Score: ', np.mean(trials_testing_score_temp))
     return res_log_npm
 
 def run_tests(config):
