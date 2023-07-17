@@ -1,0 +1,46 @@
+MODEL:
+  Bag_lst:
+  - 1
+  - 50
+  - 100
+  - 200
+  - 300
+  K_lst:
+  - 50
+  - 100
+  - 150
+  - 200
+  - 250
+  - 300
+  - 350
+  - 400
+  agg_func: weight
+  atom_bag_percent:
+  - 0.5
+  - 0.7
+  - 0.9
+  ignore_warning: true
+  random_seed: 1
+  replace_flag: true
+  select_atom_percent: 0
+  signal_bag_percent:
+  - 0.7
+  - 0.9
+  - 1.1
+  - 1.3
+  - 1.5
+TEST:
+  cv_num: 5
+  m: 20
+  model: BOMP
+  n: 600
+  noise_levels:
+  - 0.12
+  - 0.14
+  - 0.16
+  - 0.18
+  - 0.2
+  p: 1000
+  trial_num: 10
+filename: BOMP_600_1000_20_r_0716.yaml
+output_path: memory/0716/
