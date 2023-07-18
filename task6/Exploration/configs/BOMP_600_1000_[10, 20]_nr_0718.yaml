@@ -28,7 +28,9 @@ MODEL:
   - 0.9
 TEST:
   cv_num: 5
-  m: 20
+  m:
+  - 10
+  - 20
   model: BOMP
   n: 600
   noise_levels:
@@ -39,5 +41,5 @@ TEST:
   - 0.1
   p: 1000
   trial_num: 10
-filename: BOMP_600_1000_20_nr_0716.yaml
-output_path: memory/0716/
+filename: BOMP_600_1000_[10, 20]_nr_0718.yaml
+output_path: memory/0718/
