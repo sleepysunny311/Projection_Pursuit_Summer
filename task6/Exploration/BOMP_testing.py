@@ -154,6 +154,7 @@ def run_trials_npm_multi_noise_lvl(
             best_estimator.set_Bag_lst([best_estimator.optimal_bag])
             best_estimator.set_K_lst([best_estimator.optimal_k])
             best_estimator.fit(X_train, y_train)
+            training_error = mean_squared_error(y_train, best_estimator.predict(X_train))
             testing_error = mean_squared_error(y_test, best_estimator.predict(X_test))
             trials_testing_score_temp.append(testing_error)
             lowest_cv_error = np.min(cv_err_lst)
@@ -166,6 +167,7 @@ def run_trials_npm_multi_noise_lvl(
                 "trial": trial_id,
                 "cv_error_lst": cv_err_lst,
                 "lowest_cv_error": lowest_cv_error,
+                'training_error': training_error,
                 "best_params": best_params,
                 "param_lst": param_lst,
                 "testing_error": testing_error,
