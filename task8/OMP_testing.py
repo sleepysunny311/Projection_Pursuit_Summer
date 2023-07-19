@@ -196,7 +196,12 @@ def run_trials_npm_multi_noise_lvl(
         )
         res_log_npm["trials_training_score"].append(np.mean(trails_training_score_temp))
         res_log_npm["trials_testing_score"].append(np.mean(trials_testing_score_temp))
+        print("Noise level: ", noise_level,
+        "Lowest CV error: ", np.mean(trials_loweset_cv_MSE_temp),
+        "Training error: ", np.mean(trails_training_score_temp),
+        "Testing error: ", np.mean(trials_testing_score_temp))
         res_log_npm = dump_single_res(res_log_npm, filename)
+    return res_log_npm  
 
 
 
