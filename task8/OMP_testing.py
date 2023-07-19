@@ -132,6 +132,7 @@ def run_trials_npm_multi_noise_lvl(
         print("Cross validating alpha under noise level: ", noise_level)
         trials_loweset_cv_MSE_temp = []
         trials_testing_score_temp = []
+        trails_training_score_temp = []
         for trial_id in range(trial_num):
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             (
@@ -159,10 +160,12 @@ def run_trials_npm_multi_noise_lvl(
             old_bag_k_error_series = best_estimator.error_series
             best_estimator.set_K_lst([best_estimator.optimal_k])
             best_estimator.fit(X_train, y_train)
+            training_error = mean_squared_error(y_train, best_estimator.predict(X_train))
             testing_error = mean_squared_error(y_test, best_estimator.predict(X_test))
             trials_testing_score_temp.append(testing_error)
             lowest_cv_error = np.min(cv_err_lst)
             trials_loweset_cv_MSE_temp.append(lowest_cv_error)
+            trails_training_score_temp.append(training_error)
             best_params = gs.best_params_
             best_params["best_k"] = best_estimator.optimal_k
             reslog_one_trial = {
@@ -170,6 +173,7 @@ def run_trials_npm_multi_noise_lvl(
                 "trial": trial_id,
                 "cv_error_lst": cv_err_lst,
                 "lowest_cv_error": lowest_cv_error,
+                'training_error': training_error,
                 "best_params": best_params,
                 "param_lst": param_lst,
                 "testing_error": testing_error,
@@ -190,6 +194,7 @@ def run_trials_npm_multi_noise_lvl(
         res_log_npm["noise_level_lowest_cv_MSE"].append(
             np.mean(trials_loweset_cv_MSE_temp)
         )
+        res_log_npm["trials_training_score"].append(np.mean(trails_training_score_temp))
         res_log_npm["trials_testing_score"].append(np.mean(trials_testing_score_temp))
         res_log_npm = dump_single_res(res_log_npm, filename)
 
