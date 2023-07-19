@@ -9,5 +9,5 @@
 
 module load anaconda
 #Command to execute Python program
-python BOMP_testing.py --config-name BOMP_300_500_10_nr_0719.yaml --config-path ./configs
+python OMP_testing.py --config-name BOMP_300_500_10_nr_0719.yaml --config-path ./configs
 #End of script
