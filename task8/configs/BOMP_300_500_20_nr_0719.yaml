@@ -26,7 +26,8 @@ MODEL:
   - 180
   - 190
   - 200
-  - 210
+  - 250
+  - 300
   agg_func: weight
   atom_bag_percent:
   - 0.5
@@ -43,7 +44,7 @@ MODEL:
   - 0.9
 TEST:
   cv_num: 5
-  m: 10
+  m: 20
   model: BOMP
   n: 300
   noise_levels:
@@ -54,9 +55,5 @@ TEST:
   - 0.1
   p: 500
   trial_num: 10
-<<<<<<< HEAD:task8/configs/BOMP_300_500_1020_nr_0719.yaml
-filename: BOMP_300_500_1020_nr_0719.yaml
-=======
-filename: BOMP_300_500_10_nr_0719.yaml
->>>>>>> 7cb372dfe58074ad1fbac9e669fe4ac939d9a946:task8/configs/BOMP_300_500_10_nr_0719.yaml
+filename: BOMP_300_500_20_nr_0719.yaml
 output_path: memory/0719/
