@@ -188,12 +188,14 @@ def run_trials_npm_multi_noise_lvl(
                 trial_id,
                 " Best params: ",
                 best_params,
-                " Lowest Error: ",
+                " Lowest CV Error: ",
                 lowest_cv_error,
+                " Training Error: ",
+                training_error,
                 " Testing Error: ",
                 testing_error,
             )
-            res_log_npm = dump_single_res(res_log_npm, filename)
+        res_log_npm = dump_single_res(res_log_npm, filename)
         res_log_npm["noise_level_lowest_cv_MSE"].append(
             np.mean(trials_loweset_cv_MSE_temp)
         )
