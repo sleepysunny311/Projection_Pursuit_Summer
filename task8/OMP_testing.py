@@ -45,6 +45,7 @@ def clear_log(res_log_npm):
     res_log_npm["log"] = []
     res_log_npm["noise_level_lowest_cv_MSE"] = []
     res_log_npm["trials_testing_score"] = []
+    res_log_npm['trials_training_score'] = []
     return res_log_npm
 
 def dump_single_res(res_log_npm, filename):
@@ -60,6 +61,7 @@ def dump_single_res(res_log_npm, filename):
                     local_log['log'] = local_log['log'] + res_log_npm['log']
                     local_log['noise_level_lowest_cv_MSE'] = local_log['noise_level_lowest_cv_MSE'] + res_log_npm['noise_level_lowest_cv_MSE']
                     local_log['trials_testing_score'] = local_log['trials_testing_score'] + res_log_npm['trials_testing_score']
+                    local_log['trials_training_score'] = local_log['trials_training_score'] + res_log_npm['trials_training_score']
                     local_log_lists[-1] = local_log
                 else:
                     local_log_lists.append(res_log_npm)
@@ -121,6 +123,7 @@ def run_trials_npm_multi_noise_lvl(
         },
         "noise_level_lowest_cv_MSE": [],
         "trials_testing_score": [],
+        'trials_training_score': [],
         "log": [],
     }
     # print(type(res_log_npm))
