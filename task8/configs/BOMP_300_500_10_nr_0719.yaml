@@ -1,10 +1,9 @@
 MODEL:
   Bag_lst:
   - 1
-  - 50
   - 100
-  - 200
   - 300
+  - 500
   K_lst:
   - 1
   - 10
@@ -17,6 +16,15 @@ MODEL:
   - 80
   - 90
   - 100
+  - 110
+  - 120
+  - 130
+  - 140
+  - 150
+  - 160
+  - 170
+  - 180
+  - 190
   - 200
   - 250
   - 300
@@ -36,9 +44,7 @@ MODEL:
   - 0.9
 TEST:
   cv_num: 5
-  m:
-  - 10
-  - 20
+  m: 10
   model: BOMP
   n: 300
   noise_levels:
@@ -49,5 +55,5 @@ TEST:
   - 0.1
   p: 500
   trial_num: 10
-filename: BOMP_300_500_1020_nr_0718.yaml
-output_path: memory/0718/
+filename: BOMP_300_500_10_nr_0719.yaml
+output_path: memory/0719/

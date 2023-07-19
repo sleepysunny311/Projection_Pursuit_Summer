@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --account=stats
-#SBATCH --job-name=BOMP_300_500_1020_0718
+#SBATCH --job-name=BOMP_300_500_20_0719
 #SBATCH -c 16
 #SBATCH -t 5-00:00
 #SBATCH -C mem192
@@ -9,5 +9,5 @@
 
 module load anaconda
 #Command to execute Python program
-python OMP_testing.py --config-name BOMP_300_500_1020_nr_0718.yaml --config-path ./configs
+python BOMP_testing.py --config-name BOMP_300_500_20_nr_0719.yaml --config-path ./configs
 #End of script
