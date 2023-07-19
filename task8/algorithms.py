@@ -418,7 +418,7 @@ class BOMP(AtomBaggingBase):
         col_idx_bag = self.SignalBagging.col_idx_bag
         self.coefficients_cubic = np.zeros((np.max(self.Bag_lst), phi.shape[1], len(self.K_lst)))
         self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
-        self.bag_k_error_matrix = np.zeros((len(self.Bag_lst), 3))
+        self.bag_k_error_matrix = np.zeros((len(self.Bag_lst)*len(self.K_lst), 3))
 
 
         if self.random_seed is not None:
@@ -454,11 +454,10 @@ class BOMP(AtomBaggingBase):
                 temp_projection_matrix = phi @ temp_coefficients_matrix
                 temp_residual_matrix = s.reshape(-1, 1) - temp_projection_matrix
                 temp_error_series = np.mean(temp_residual_matrix ** 2, axis=0)
-                temp_optimal_idx = np.argmin(temp_error_series)
-                
-                self.bag_k_error_matrix[self.Bag_lst.index(i+1), :] = np.array([i+1, self.K_lst[temp_optimal_idx], temp_error_series[temp_optimal_idx]])
-
-
+                bag_idx = self.Bag_lst.index(i+1)
+                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 0] = i+1
+                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 1] = self.K_lst
+                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 2] = temp_error_series
         self.optimal_idx = np.argmin(self.bag_k_error_matrix[:, 2])
 
         self.optimal_k = int(self.bag_k_error_matrix[self.optimal_idx, 1])

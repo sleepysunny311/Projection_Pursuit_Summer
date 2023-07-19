@@ -17,9 +17,17 @@ MODEL:
   - 80
   - 90
   - 100
+  - 110
+  - 120
+  - 130
+  - 140
+  - 150
+  - 160
+  - 170
+  - 180
+  - 190
   - 200
-  - 250
-  - 300
+  - 210
   agg_func: weight
   atom_bag_percent:
   - 0.5
@@ -49,5 +57,5 @@ TEST:
   - 0.1
   p: 500
   trial_num: 10
-filename: BOMP_300_500_1020_nr_0718.yaml
-output_path: memory/0718/
+filename: BOMP_300_500_1020_nr_0719.yaml
+output_path: memory/0719/
