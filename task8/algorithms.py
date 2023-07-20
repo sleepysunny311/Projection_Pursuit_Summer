@@ -133,7 +133,7 @@ class AtomBaggingBase(BaseEstimator):
 
     def score(self, phi_test, s_test):
         # return self.coefficients
-        s_pred = phi_test @ self.coefficients
+        s_pred = (phi_test @ self.coefficients).reshape(-1, 1)
         pred_mse = np.mean((s_pred - s_test) ** 2)
         return pred_mse
 
