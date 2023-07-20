@@ -458,13 +458,14 @@ class BOMP(AtomBaggingBase):
                 self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 0] = i+1
                 self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 1] = self.K_lst
                 self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 2] = temp_error_series
+
         self.optimal_idx = np.argmin(self.bag_k_error_matrix[:, 2])
 
         self.optimal_k = int(self.bag_k_error_matrix[self.optimal_idx, 1])
 
         self.optimal_bag = int(self.bag_k_error_matrix[self.optimal_idx, 0])
 
-
+        # print(self.bag_k_error_matrix)
         counted_array = np.array(
             np.unique(np.concatenate(col_idx_bag[: self.optimal_bag]), return_counts=True)
         )
