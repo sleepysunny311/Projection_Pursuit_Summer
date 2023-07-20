@@ -70,3 +70,6 @@ target/
 
 # Notebook Checkpoints
 .ipynb_checkpoints/
+sty/algorithms.py
+sty/data_generation.py
+sty/test.ipynb
