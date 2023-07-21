@@ -1,0 +1,63 @@
+Running trials for n = 300, p = 500, m = 20
+Cross validating alpha under noise level:  0.02
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 900, 'best_k': 130}  Lowest CV Error:  0.0078208583027772  Training Error:  0.0006727451380009439  Testing Error:  0.008787096160589926
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.00476139200509805  Training Error:  0.00023593500023954075  Testing Error:  0.002519002946626644
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 700, 'best_k': 170}  Lowest CV Error:  0.0061189640940619685  Training Error:  0.00038715301510151856  Testing Error:  0.0058593415332436356
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 800, 'best_k': 170}  Lowest CV Error:  0.0037268159299865206  Training Error:  0.00023869989087541308  Testing Error:  0.0024471328564772904
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 900, 'best_k': 170}  Lowest CV Error:  0.007427915532173604  Training Error:  0.00046139084118014333  Testing Error:  0.0034135682558050556
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 800, 'best_k': 170}  Lowest CV Error:  0.005497773808143262  Training Error:  0.0003690683718498956  Testing Error:  0.0030008015913846934
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.007120320143829318  Training Error:  0.0004080533878870717  Testing Error:  0.00475395546331236
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.009958412757543101  Training Error:  0.0006020146286081329  Testing Error:  0.00803312721069166
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.9, 'best_bag': 500, 'best_k': 160}  Lowest CV Error:  0.004106324233070023  Training Error:  0.0004182728938886919  Testing Error:  0.001977227948839338
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.01822309232903438  Training Error:  0.0009817852754375475  Testing Error:  0.01544241407547065
+Noise level:  0.02  Lowest CV Error:  0.007476186913571742  Training Error:  0.00047751184430688993  Testing Error:  0.005623366804244126
+Cross validating alpha under noise level:  0.04
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.010475909184770555  Training Error:  0.0010388176694621685  Testing Error:  0.011736679210976455
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.007124700250753102  Training Error:  0.0004046080194995046  Testing Error:  0.0041600344839882635
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 800, 'best_k': 170}  Lowest CV Error:  0.008495815577863932  Training Error:  0.0005191257959177819  Testing Error:  0.008077172352370916
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.006445483996202451  Training Error:  0.0006232227689616625  Testing Error:  0.004409892330632828
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 500, 'best_k': 170}  Lowest CV Error:  0.009846850622318225  Training Error:  0.0005164075427303749  Testing Error:  0.005430176238583942
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.00788200252011716  Training Error:  0.0005673172828285796  Testing Error:  0.00439442870126679
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.010364103814641201  Training Error:  0.000629104538080454  Testing Error:  0.007740154099270042
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.012909330464366157  Training Error:  0.0007509829888613107  Testing Error:  0.01121559822450207
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 500, 'best_k': 170}  Lowest CV Error:  0.006739827021347745  Training Error:  0.00042157049092977965  Testing Error:  0.00470159285094011
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.019447089670742233  Training Error:  0.0011315694567924422  Testing Error:  0.01804784683784346
+Noise level:  0.04  Lowest CV Error:  0.009973111312312275  Training Error:  0.0006602726554064058  Testing Error:  0.007991357533037488
+Cross validating alpha under noise level:  0.06
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.014160805488770276  Training Error:  0.0009724097127334214  Testing Error:  0.01612197106872376
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.010938431066276625  Training Error:  0.0006779603960159926  Testing Error:  0.006915184479049319
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.01308194592054448  Training Error:  0.0007624683422226444  Testing Error:  0.01144879175882896
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 800, 'best_k': 130}  Lowest CV Error:  0.01054244033706823  Training Error:  0.001218068488152062  Testing Error:  0.007097191085902435
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 900, 'best_k': 170}  Lowest CV Error:  0.014268583106898136  Training Error:  0.0006298417683498834  Testing Error:  0.008328015447829193
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.011280336502178646  Training Error:  0.0007876759886708063  Testing Error:  0.006556086180387785
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.01539789585387058  Training Error:  0.0009135194067106289  Testing Error:  0.012605687342124722
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.015760369096135044  Training Error:  0.0010233496491499322  Testing Error:  0.015368440729150805
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 1000, 'best_k': 170}  Lowest CV Error:  0.011153739579069266  Training Error:  0.0005750484973936547  Testing Error:  0.009504653878114392
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.025023537832032004  Training Error:  0.0026697235131291006  Testing Error:  0.02370165256777744
+Noise level:  0.06  Lowest CV Error:  0.01416080847828433  Training Error:  0.0010230065762528127  Testing Error:  0.01176476745378888
+Cross validating alpha under noise level:  0.08
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.019328678306922118  Training Error:  0.0013398062276087001  Testing Error:  0.023038386618365696
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.015658296580361154  Training Error:  0.0010083546756172797  Testing Error:  0.0110583495405505
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.01854308968563944  Training Error:  0.0018928604637852577  Testing Error:  0.017917625978793632
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.0170685304149479  Training Error:  0.0018338626993547776  Testing Error:  0.010531283043914983
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.01854144502268017  Training Error:  0.001815452453527752  Testing Error:  0.014704485197772574
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.01496958227529246  Training Error:  0.0011097046485446524  Testing Error:  0.010617307461129067
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 1000, 'best_k': 160}  Lowest CV Error:  0.021539943843002902  Training Error:  0.0013659407318834125  Testing Error:  0.019535195493471675
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.02056622347159552  Training Error:  0.002187970038138634  Testing Error:  0.022359305059013415
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.8, 'best_bag': 1000, 'best_k': 170}  Lowest CV Error:  0.016858112509781774  Training Error:  0.0007841794701920667  Testing Error:  0.015648823568155463
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.02976463420824465  Training Error:  0.0034599790617410283  Testing Error:  0.0287883847694277
+Noise level:  0.08  Lowest CV Error:  0.019283853631846808  Training Error:  0.0016798110470393562  Testing Error:  0.01741991467305947
+Cross validating alpha under noise level:  0.1
+Trial:  0  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 900, 'best_k': 160}  Lowest CV Error:  0.02657249826440547  Training Error:  0.0017519577875489808  Testing Error:  0.030758460743784688
+Trial:  1  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 1000, 'best_k': 110}  Lowest CV Error:  0.020785383842850166  Training Error:  0.0039392503479447226  Testing Error:  0.015666337606308495
+Trial:  2  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.025422784040535485  Training Error:  0.0029055075213391124  Testing Error:  0.023005060804842038
+Trial:  3  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.4, 'best_bag': 800, 'best_k': 90}  Lowest CV Error:  0.021700341263341773  Training Error:  0.006720393315556598  Testing Error:  0.01629074456852231
+Trial:  4  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.7, 'best_bag': 900, 'best_k': 160}  Lowest CV Error:  0.024534326356139183  Training Error:  0.0013295347860756415  Testing Error:  0.018905211541599784
+Trial:  5  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.02154463457238905  Training Error:  0.0025427411314470146  Testing Error:  0.013978139556076769
+Trial:  6  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 1000, 'best_k': 110}  Lowest CV Error:  0.027504711857940723  Training Error:  0.005521881212812437  Testing Error:  0.0258362151213523
+Trial:  7  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.027518953739240758  Training Error:  0.0028906529630252837  Testing Error:  0.02778533992451314
+Trial:  8  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.5, 'best_bag': 800, 'best_k': 110}  Lowest CV Error:  0.022252720106442504  Training Error:  0.004081669394042792  Testing Error:  0.020606334724017992
+Trial:  9  Best params:  {'atom_bag_percent': 0.9, 'signal_bag_percent': 0.6, 'best_bag': 1000, 'best_k': 140}  Lowest CV Error:  0.037047460639321995  Training Error:  0.004151979592999947  Testing Error:  0.03857851990278929
+Noise level:  0.1  Lowest CV Error:  0.025488381468260712  Training Error:  0.0035835568052792533  Testing Error:  0.023141036449380682
+Done!
+Results are saved in:  ./memory/BOMP_300_500_20_nr_0720_0720-235256.pkl
