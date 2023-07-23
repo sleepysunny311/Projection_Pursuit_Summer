@@ -1,0 +1,63 @@
+Running trials for n = 300, p = 500, m = 10
+Cross validating alpha under noise level:  0.02
+Trial:  0  Best params:  {'best_k': 1}  Lowest CV Error:  0.025128325805353142  Training Error:  0.02279495487676664  Testing Error:  0.02668277532127793
+Trial:  1  Best params:  {'best_k': 1}  Lowest CV Error:  0.0065425580742214965  Training Error:  0.006129731675433853  Testing Error:  0.005157889001248258
+Trial:  2  Best params:  {'best_k': 1}  Lowest CV Error:  0.01032071251050763  Training Error:  0.010265582372567797  Testing Error:  0.00922923069307875
+Trial:  3  Best params:  {'best_k': 1}  Lowest CV Error:  0.014022431845261005  Training Error:  0.013961818247835508  Testing Error:  0.017787749101878567
+Trial:  4  Best params:  {'best_k': 1}  Lowest CV Error:  0.02060679689333602  Training Error:  0.02046388862019748  Testing Error:  0.022797520158631394
+Trial:  5  Best params:  {'best_k': 1}  Lowest CV Error:  0.00321371205196892  Training Error:  0.003190839854995267  Testing Error:  0.0032924444537475147
+Trial:  6  Best params:  {'best_k': 1}  Lowest CV Error:  0.032465607220662086  Training Error:  0.02921688305528593  Testing Error:  0.023858368512557158
+Trial:  7  Best params:  {'best_k': 1}  Lowest CV Error:  0.016682736538808956  Training Error:  0.01662424779777352  Testing Error:  0.015231885918659503
+Trial:  8  Best params:  {'best_k': 1}  Lowest CV Error:  0.014339092576465762  Training Error:  0.01426763944970005  Testing Error:  0.01030515352615778
+Trial:  9  Best params:  {'best_k': 1}  Lowest CV Error:  0.017351241300438608  Training Error:  0.01726406424692263  Testing Error:  0.01766714122437613
+Noise level:  0.02 Lowest CV error:  0.01606732148170236 Training error:  0.01541796501974787 Testing error:  0.015201015791161298
+Cross validating alpha under noise level:  0.04
+Trial:  0  Best params:  {'best_k': 1}  Lowest CV Error:  0.02666248667653328  Training Error:  0.02417450754789128  Testing Error:  0.02922599216486186
+Trial:  1  Best params:  {'best_k': 1}  Lowest CV Error:  0.007267300284445841  Training Error:  0.007174877066674628  Testing Error:  0.005755220046585421
+Trial:  2  Best params:  {'best_k': 1}  Lowest CV Error:  0.011901628154710936  Training Error:  0.01184182602734545  Testing Error:  0.010865030420029415
+Trial:  3  Best params:  {'best_k': 1}  Lowest CV Error:  0.015426465121244876  Training Error:  0.015366748334285318  Testing Error:  0.019181147586897075
+Trial:  4  Best params:  {'best_k': 1}  Lowest CV Error:  0.020955036329795583  Training Error:  0.020822370203318185  Testing Error:  0.02397748939024407
+Trial:  5  Best params:  {'best_k': 1}  Lowest CV Error:  0.004235971201040703  Training Error:  0.004206850691629373  Testing Error:  0.004087941106794512
+Trial:  6  Best params:  {'best_k': 1}  Lowest CV Error:  0.0346197745689723  Training Error:  0.031335434788769996  Testing Error:  0.024507993616979012
+Trial:  7  Best params:  {'best_k': 1}  Lowest CV Error:  0.018476304431343453  Training Error:  0.018402377824418108  Testing Error:  0.016874180075416065
+Trial:  8  Best params:  {'best_k': 1}  Lowest CV Error:  0.01576190349223305  Training Error:  0.0156902872755981  Testing Error:  0.011630985929231471
+Trial:  9  Best params:  {'best_k': 1}  Lowest CV Error:  0.01914027994858678  Training Error:  0.019033599714532046  Testing Error:  0.018376596474925712
+Noise level:  0.04 Lowest CV error:  0.01744471502089068 Training error:  0.016804887947446247 Testing error:  0.01644825768119646
+Cross validating alpha under noise level:  0.06
+Trial:  0  Best params:  {'best_k': 1}  Lowest CV Error:  0.029054882813154527  Training Error:  0.026406519418610833  Testing Error:  0.0325096235003129
+Trial:  1  Best params:  {'best_k': 1}  Lowest CV Error:  0.009037879802634716  Training Error:  0.00891983857439818  Testing Error:  0.006970862616725113
+Trial:  2  Best params:  {'best_k': 1}  Lowest CV Error:  0.014317308359160761  Training Error:  0.014251389387929561  Testing Error:  0.013560182069597996
+Trial:  3  Best params:  {'best_k': 1}  Lowest CV Error:  0.017651301332239792  Training Error:  0.017586436812807783  Testing Error:  0.021256472609997936
+Trial:  4  Best params:  {'best_k': 1}  Lowest CV Error:  0.02203073594533045  Training Error:  0.021905598252595526  Testing Error:  0.02635162187620015
+Trial:  5  Best params:  {'best_k': 1}  Lowest CV Error:  0.005983876283394941  Training Error:  0.005945907968181963  Testing Error:  0.005483512035949089
+Trial:  6  Best params:  {'best_k': 1}  Lowest CV Error:  0.03905056204965257  Training Error:  0.034317093892139924  Testing Error:  0.025984038859378538
+Trial:  7  Best params:  {'best_k': 1}  Lowest CV Error:  0.02110307167769807  Training Error:  0.021000303363631227  Testing Error:  0.01926264541705142
+Trial:  8  Best params:  {'best_k': 1}  Lowest CV Error:  0.017976396159064285  Training Error:  0.017902005388784725  Testing Error:  0.013852709269066128
+Trial:  9  Best params:  {'best_k': 1}  Lowest CV Error:  0.021773044126890295  Training Error:  0.02163630488017522  Testing Error:  0.019984223304296608
+Noise level:  0.06 Lowest CV error:  0.01979790585492204 Training error:  0.018987139793925495 Testing error:  0.01852158915585759
+Cross validating alpha under noise level:  0.08
+Trial:  0  Best params:  {'best_k': 1}  Lowest CV Error:  0.032305514215216866  Training Error:  0.02949099048892532  Testing Error:  0.03653366932763104
+Trial:  1  Best params:  {'best_k': 1}  Lowest CV Error:  0.011512117029749469  Training Error:  0.011364616198604507  Testing Error:  0.00880481671166734
+Trial:  2  Best params:  {'best_k': 1}  Lowest CV Error:  0.01756775312385711  Training Error:  0.01749427245432013  Testing Error:  0.0173146856417845
+Trial:  3  Best params:  {'best_k': 1}  Lowest CV Error:  0.020696940478245753  Training Error:  0.0206208836834029  Testing Error:  0.024013724171181153
+Trial:  4  Best params:  {'best_k': 1}  Lowest CV Error:  0.023833895739940616  Training Error:  0.0237135727680295  Testing Error:  0.029919917616499613
+Trial:  5  Best params:  {'best_k': 1}  Lowest CV Error:  0.008457427299031633  Training Error:  0.00840801168465304  Testing Error:  0.007479157241211247
+Trial:  6  Best params:  {'best_k': 1}  Lowest CV Error:  0.04306056403102028  Training Error:  0.03816186036539573  Testing Error:  0.028286504239755726
+Trial:  7  Best params:  {'best_k': 1}  Lowest CV Error:  0.024563038277872814  Training Error:  0.02441802441541289  Testing Error:  0.02239728194356558
+Trial:  8  Best params:  {'best_k': 1}  Lowest CV Error:  0.020982570576959465  Training Error:  0.020902793789259914  Testing Error:  0.016970323545661765
+Trial:  9  Best params:  {'best_k': 1}  Lowest CV Error:  0.02524953383534916  Training Error:  0.02507217974385216  Testing Error:  0.022490021712488813
+Noise level:  0.08 Lowest CV error:  0.02282293546072432 Training error:  0.021964720559185608 Testing error:  0.021421010215144677
+Cross validating alpha under noise level:  0.1
+Trial:  0  Best params:  {'best_k': 1}  Lowest CV Error:  0.036414380882720324  Training Error:  0.033427920758834724  Testing Error:  0.04129812964681629
+Trial:  1  Best params:  {'best_k': 1}  Lowest CV Error:  0.014690011965790107  Training Error:  0.014509209939293612  Testing Error:  0.011257082331412092
+Trial:  2  Best params:  {'best_k': 1}  Lowest CV Error:  0.021652962448799978  Training Error:  0.021570475226517154  Testing Error:  0.022128541136588926
+Trial:  3  Best params:  {'best_k': 1}  Lowest CV Error:  0.02456338255926275  Training Error:  0.024470088946070674  Testing Error:  0.027452902270446722
+Trial:  4  Best params:  {'best_k': 1}  Lowest CV Error:  0.02636451571362609  Training Error:  0.026246293749620116  Testing Error:  0.03468237661114248
+Trial:  5  Best params:  {'best_k': 1}  Lowest CV Error:  0.011656624247950784  Training Error:  0.011593161841042598  Testing Error:  0.010074876722580981
+Trial:  6  Best params:  {'best_k': 1}  Lowest CV Error:  0.04794280925005511  Training Error:  0.04272698004719769  Testing Error:  0.04208453642498875
+Trial:  7  Best params:  {'best_k': 1}  Lowest CV Error:  0.02885620423186768  Training Error:  0.028655540979763087  Testing Error:  0.026278089654958533
+Trial:  8  Best params:  {'best_k': 1}  Lowest CV Error:  0.024780426745918578  Training Error:  0.02469265247702368  Testing Error:  0.02098382875901837
+Trial:  9  Best params:  {'best_k': 1}  Lowest CV Error:  0.02956974907396336  Training Error:  0.029341224305562866  Testing Error:  0.02589399169950233
+Noise level:  0.1 Lowest CV error:  0.026649106711995475 Training error:  0.02572335482709262 Testing error:  0.026213435525745548
+Done!
+Results are saved in:  ./memory/Baseline_BOMP_300_500_10_nr_0720_0720-235234.pkl

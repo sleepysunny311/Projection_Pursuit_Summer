@@ -1,0 +1,64 @@
+MODEL:
+  Bag_lst:
+  - 1
+  - 100
+  - 200
+  - 300
+  - 400
+  - 500
+  - 600
+  - 700
+  - 800
+  - 900
+  - 1000
+  K_lst:
+  - 1
+  - 10
+  - 20
+  - 30
+  - 40
+  - 50
+  - 60
+  - 70
+  - 80
+  - 90
+  - 100
+  - 110
+  - 120
+  - 130
+  - 140
+  - 150
+  - 160
+  - 170
+  agg_func: weight
+  atom_bag_percent:
+  - 0.5
+  - 0.7
+  - 0.8
+  - 0.9
+  ignore_warning: true
+  random_seed: 1
+  replace_flag: false
+  select_atom_percent: 0
+  signal_bag_percent:
+  - 0.4
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.9
+TEST:
+  cv_num: 5
+  m: 20
+  model: BOMP
+  n: 300
+  noise_levels:
+  - 0.02
+  - 0.04
+  - 0.06
+  - 0.08
+  - 0.1
+  p: 500
+  trial_num: 10
+filename: BOMP_300_500_20_nr_0720.yaml
+output_path: memory/0720/
