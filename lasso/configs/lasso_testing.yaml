@@ -1,0 +1,36 @@
+MODEL:
+  N_bag:
+  - 1
+  - 10
+  alpha:
+  - 0.1
+  - 0.2
+  agg_func: weight
+  atom_bag_percent:
+  - 0.7
+  - 0.8
+  - 0.9
+  ignore_warning: true
+  random_seed: 1
+  replace_flag: false
+  signal_bag_percent:
+  - 0.7
+  - 0.8
+  - 0.9
+  max_iter: 10000
+  tol: 0.00001
+TEST:
+  cv_num: 5
+  m: 10
+  model: Lasso
+  n: 300
+  noise_levels:
+  - 0.12
+  - 0.14
+  - 0.16
+  - 0.18
+  - 0.2
+  p: 500
+  trial_num: 10
+filename: lasso_300_500_10_nr_0721.yaml
+output_path: memory/0721/

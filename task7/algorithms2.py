@@ -32,6 +32,7 @@ class SignalAtomBagging:
         self.s_bag = []
         self.phi_bag = []
         self.col_idx_bag = []
+        self.row_idx_bag = []
 
     def fit(self, phi, s):
         """
@@ -62,6 +63,7 @@ class SignalAtomBagging:
                 self.s_bag.append(s_tmp)
                 self.phi_bag.append(phi_tmp)
                 self.col_idx_bag.append(col_indices)
+                self.row_idx_bag.append(row_indices)
         else:
             self.s_bag = [self.s] * self.N
             for _ in range(self.N):
@@ -133,11 +135,11 @@ class AtomBaggingBase(BaseEstimator):
         numpy.ndarray: Predicted output
         """
 
-        return phi_test @ self.coefficients
+        return (phi_test @ self.coefficients).reshape(-1, 1)
 
     def score(self, s_test, phi_test):
         s_pred = phi_test @ self.final_c
-        pred_mse = np.mean((s_pred - s_test) ** 2)
+        pred_mse = np.mean((s_pred.ravel() - s_test.ravel()) ** 2)
         return pred_mse
 
     def input_coefficients(self, coefficients):
@@ -372,11 +374,14 @@ class BOMP(AtomBaggingBase):
         s_bag = self.SignalBagging.s_bag
         phi_bag = self.SignalBagging.phi_bag
         col_idx_bag = self.SignalBagging.col_idx_bag
+        row_idx_bag = self.SignalBagging.row_idx_bag
 
         for i in range(self.N_bag):
             sub_s = s_bag[i]
             sub_phi = phi_bag[i]
-            sub_idx = col_idx_bag[i]
+            col_sub_idx = col_idx_bag[i]
+            row_sub_idx = row_idx_bag[i]
+            
             self.tmpPursuitModel = OMP_Augmented(
                 self.K,
                 self.select_atom_percent,
@@ -385,9 +390,17 @@ class BOMP(AtomBaggingBase):
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
             sub_coefficients = self.tmpPursuitModel.coefficients
-            self.mse_lst.append(np.mean((sub_s - sub_phi @ sub_coefficients) ** 2))
+            # calculate mse_lst using oob samples
+            if self.signal_bag_percent < 1:
+                row_oob_idx = np.setdiff1d(np.arange(self.s.shape[0]), row_sub_idx)
+                phi_oob = phi[row_oob_idx, :][:, col_sub_idx]
+                s_oob = s[row_oob_idx, :]
+                oob_mse = np.mean((s_oob.ravel() - phi_oob @ sub_coefficients) ** 2)
+                self.mse_lst.append(oob_mse)
+            else:
+                self.mse_lst.append(np.mean((sub_s.ravel() - sub_phi @ sub_coefficients) ** 2))
             real_sub_coefficients = np.zeros(phi.shape[1])
-            real_sub_coefficients[sub_idx] = sub_coefficients
+            real_sub_coefficients[col_sub_idx] = sub_coefficients
             self.coefficients_lst.append(real_sub_coefficients)
             # self.indices_lst.append(self.tmpPursuitModel.indices)
 

@@ -14,17 +14,18 @@ from datetime import datetime
 import numpy as np
 from data_generation import GaussianDataGenerator
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
+from sklearn.model_selection import RandomizedSearchCV, train_test_split, GridSearchCV
 import pickle as pkl
 
-from algorithms2 import BOMP
+from sklearn.linear_model import Lasso
+from bagging_lasso import Bagging_Lasso
 
 import warnings
 warnings.filterwarnings('ignore')
 
 def get_parser():
     parser = argparse.ArgumentParser(description='Testing')
-    parser.add_argument('--config', type=str, default='configs/bomp_default.yaml', metavar= "FILE" ,help='path to config file')
+    parser.add_argument('--config', type=str, default='configs/lasso_default.yaml', metavar= "FILE" ,help='path to config file')
     parser.add_argument("--output", type=str, help="Output path")
     return parser
 
@@ -75,31 +76,19 @@ def get_model_params(config):
     all_params = config['MODEL']
     param_grid = {}
     fixed_params = {}
-    K_start, K_end, K_step = all_params['K_start'], all_params['K_end'], all_params['K_step']
-    if K_start >= K_end:
-        raise ValueError("K_start must be smaller than K_end")
-    if K_step <= 0:
-        raise ValueError("K_step must be positive")
-    # Check if K_start, K_end, K_step are integers
-    if not isinstance(K_start, int) or not isinstance(K_end, int) or not isinstance(K_step, int):
-        raise ValueError("K_start, K_end, K_step must be integers")
-    K_list = np.arange(K_start, K_end, K_step, dtype=int)
     # Check if the param is a list or a single value if it is a list save to param_grid or else save to fixed_params
     for param, value in all_params.items():
-        if param in ['K_start', 'K_end', 'K_step']:
-            continue
         if isinstance(value, list):
             param_grid[param] = value
         else:
             fixed_params[param] = value
-    param_grid['K'] = K_list
     return fixed_params, param_grid
     
-def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num, n_iter):
+def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
     # get the model
 
-    if model_name == "BOMP": 
-        model = BOMP(**fixed_params)
+    if model_name == "Lasso": 
+        model = Bagging_Lasso(**fixed_params)
 
     res_log_npm = {
         'parameters': {'n': n, 'p': p, 'm': m, 'noise_level_lst': noise_level_lst, 'model_name': model_name, 'cv_num': cv_num, 'trial_num': trial_num, 'param_grid': param_grid, 'fixed_params': fixed_params},
@@ -118,7 +107,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
             X_train, X_test, y_train, y_test = train_test_split(dictionary, perturbed_signal, test_size=0.2, random_state=trial_id) 
-            gs = RandomizedSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, n_iter=n_iter, verbose = 0)
+            gs = GridSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1)
             gs.fit(X_train, y_train)
             cv_err_lst = -gs.cv_results_['mean_test_score']
             param_lst = gs.cv_results_['params']
@@ -147,11 +136,10 @@ def run_tests(config):
     n_tmp = config['TEST']['n']
     p_tmp = config['TEST']['p']
     m_tmp = config['TEST']['m']
-    noise_level_lst = config['TEST']['noise_level']
+    noise_level_lst = config['TEST']['noise_levels']
     model_name = config['TEST']['model']
     cv_num = config['TEST']['cv_num']
     trial_num = config['TEST']['trial_num']
-    n_iter = config['TEST']['n_iter']
     
     # Get n, p, m, noise_level combinations
     if not isinstance(n_tmp, list):
@@ -173,7 +161,7 @@ def run_tests(config):
     ALL_LOGS = []
     
     for n, p, m in npm_lst:
-        reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num, n_iter)
+        reslog_npm = run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num)
         ALL_LOGS.append(reslog_npm)
         
     return ALL_LOGS
@@ -183,7 +171,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     # Merge default config and input config
-    default_config = get_cfg("configs/bomp_default.yaml")
+    default_config = get_cfg("configs/lasso_default.yaml")
     input_config = get_cfg(args.config)
     full_config = merge_cfg(default_config, input_config)
     

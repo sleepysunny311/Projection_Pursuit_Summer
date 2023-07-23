@@ -14,7 +14,7 @@ from datetime import datetime
 import numpy as np
 from data_generation import GaussianDataGenerator
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
+from sklearn.model_selection import RandomizedSearchCV, train_test_split, GridSearchCV
 import pickle as pkl
 
 from algorithms2 import BOMP
@@ -118,7 +118,7 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             Data_Geneartor = GaussianDataGenerator(p, n, m, noise_level, trial_id)
             true_signal, dictionary, true_indices, true_coefficients, perturbed_signal = Data_Geneartor.shuffle()
             X_train, X_test, y_train, y_test = train_test_split(dictionary, perturbed_signal, test_size=0.2, random_state=trial_id) 
-            gs = RandomizedSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1, n_iter=n_iter, verbose = 0)
+            gs = GridSearchCV(model, param_grid, cv=cv_num, scoring='neg_mean_squared_error', n_jobs=-1)
             gs.fit(X_train, y_train)
             cv_err_lst = -gs.cv_results_['mean_test_score']
             param_lst = gs.cv_results_['params']
