@@ -1,19 +1,22 @@
 MODEL:
   N_bag:
   - 1
-  - 10
-  alpha:
-  - 0.1
-  - 0.2
+  - 200
+  - 500
+  alpha_start_log: -7
+  alpha_end_log: -2
+  alpha_num: 50
   agg_func: weight
   atom_bag_percent:
   - 0.7
   - 0.8
   - 0.9
+  - 1
   ignore_warning: true
   random_seed: 1
   replace_flag: false
   signal_bag_percent:
+  - 0.6
   - 0.7
   - 0.8
   - 0.9
@@ -21,16 +24,11 @@ MODEL:
   tol: 0.00001
 TEST:
   cv_num: 5
-  m: 10
+  m: 20
   model: Lasso
   n: 300
-  noise_levels:
-  - 0.12
-  - 0.14
-  - 0.16
-  - 0.18
-  - 0.2
-  p: 500
+  noise_levels: [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.22, 0.24, 0.26, 0.28, 0.3, 0.4, 0.5]
+  p: 600
   trial_num: 10
-filename: lasso_300_500_10_nr_0721.yaml
-output_path: memory/0721/
+filename: lasso_300_600_20_nr_AN.yaml
+output_path: memory/

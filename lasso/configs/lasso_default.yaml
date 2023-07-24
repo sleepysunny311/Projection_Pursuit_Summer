@@ -3,9 +3,9 @@ MODEL:
   - 1
   - 100
   - 500
-  alpha:
-  - 0.1
-  - 0.2
+  alpha_start_log: -7
+  alpha_end_log: -5
+  alpha_num: 2
   agg_func: weight
   atom_bag_percent:
   - 0.7

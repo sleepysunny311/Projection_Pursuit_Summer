@@ -76,12 +76,22 @@ def get_model_params(config):
     all_params = config['MODEL']
     param_grid = {}
     fixed_params = {}
+    alpha_start_log = all_params['alpha_start_log']
+    alpha_end_log = all_params['alpha_end_log']
+    alpha_num = all_params['alpha_num']
+    alpha_lst = np.logspace(alpha_start_log, alpha_end_log, alpha_num)
     # Check if the param is a list or a single value if it is a list save to param_grid or else save to fixed_params
     for param, value in all_params.items():
+        if param == 'alpha_start_log' or param == 'alpha_end_log' or param == 'alpha_num':
+            continue
         if isinstance(value, list):
             param_grid[param] = value
         else:
             fixed_params[param] = value
+    if alpha_num == 1:
+        fixed_params['alpha'] = alpha_lst[0]
+    else:
+        param_grid['alpha'] = alpha_lst
     return fixed_params, param_grid
     
 def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
