@@ -35,7 +35,6 @@ def get_cfg(config_file):
         config = yaml.safe_load(f)
     return config
 
-
 def merge_cfg(default_dict, input_dict):
     merged_dict = default_dict.copy()  # Start with default values.
     sections = ['MODEL', 'TEST']  # Specify sections to update
