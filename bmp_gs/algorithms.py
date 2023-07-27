@@ -90,7 +90,6 @@ class AtomBaggingBase(BaseEstimator):
         self.atom_weak_select_flag = select_atom_percent > 0
         self.atom_bag_percent = np.max([0, np.min([1, atom_bag_percent])])
 
-        self.indices = []
         self.s = None
         self.phi = None
         self.a = None
@@ -102,7 +101,6 @@ class AtomBaggingBase(BaseEstimator):
 
 
     def reset(self):
-        self.indices = []
         self.s = None
         self.phi = None
         self.a = None
@@ -125,7 +123,7 @@ class AtomBaggingBase(BaseEstimator):
 
     def score(self, phi_test, s_test):
         # return self.coefficients
-        s_pred = (phi_test @ self.coefficients).reshape(-1, 1)
+        s_pred = self.predict(phi_test)
         pred_mse = np.mean((s_pred - s_test) ** 2)
         return pred_mse
 
@@ -186,12 +184,11 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
                 lambda_k = np.random.choice(top_ind)
             else:
                 lambda_k = np.argmax(np.abs(inner_products))
-            self.indices.append(lambda_k)
-            phi_lambda_norm_sq = np.linalg.norm(phi[:, lambda_k]) ** 2
+            lambda_k_coefficient_increment = inner_products[lambda_k] / ((phi[:, lambda_k] ** 2).sum())
             self.coefficients[lambda_k] = (
-                self.coefficients[lambda_k] + inner_products[lambda_k] / phi_lambda_norm_sq
+                self.coefficients[lambda_k] +  lambda_k_coefficient_increment
             )
-            self.a += (inner_products[lambda_k] / phi_lambda_norm_sq) * phi[:, lambda_k].reshape(-1, 1)
+            self.a += lambda_k_coefficient_increment * phi[:, lambda_k].reshape(-1, 1)
             self.r = self.s - self.a
         return self.a, self.coefficients
 
@@ -349,6 +346,12 @@ class BMP(AtomBaggingBase):
         phi (numpy.ndarray): Dictionary
         """
         self.reset()
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+        else:
+            np.random.seed(0)
+
         self.coefficients_lst = []
         self.mse_lst = []
 
@@ -375,7 +378,7 @@ class BMP(AtomBaggingBase):
                 self.K,
                 self.atom_bag_percent,
                 self.select_atom_percent,
-                None
+                np.random.randint(0, 100000)
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
             sub_coefficients = self.tmpPursuitModel.coefficients
