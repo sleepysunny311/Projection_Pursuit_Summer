@@ -358,7 +358,7 @@ class BMP(AtomBaggingBase):
             self.N_bag,
             self.signal_bag_percent,
             self.replace_flag,
-            np.random.randint(64),
+            self.random_seed
         )
         self.SignalBagging.fit(self.phi, self.s)
 
@@ -389,7 +389,6 @@ class BMP(AtomBaggingBase):
             else:
                 self.mse_lst.append(np.mean((sub_s.ravel() - sub_phi @ sub_coefficients) ** 2))
             self.coefficients_lst.append(sub_coefficients)
-            print("Tmp Pursuit Model indices: ", self.tmpPursuitModel.indices)
             # self.indices_lst.append(self.tmpPursuitModel.indices)
 
         if self.agg_func == "weight":
