@@ -1,10 +1,11 @@
 import numpy as np
 from sklearn.base import BaseEstimator
+import hashlib
 
 # This file contains classes for different pursuit algorithms
 
 
-class SignalAtomBagging:
+class SignalBagging:
     def __init__(
         self,
         N,
@@ -144,19 +145,34 @@ class AtomBaggingBase(BaseEstimator):
         self.random_seed = random_seed
 
 
-class AtomBaggingMatchingPursuit(AtomBaggingBase):
-    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=0):
-        """
-        This class is used to perform atom bagging with matching pursuit
 
-        Args:
-        K (int): Number of iterations
-        atom_bag_percent (float): Percentage of the original dictionary
-        select_atom_percent (float): Percentage of the selected atoms
-        random_seed (int): Random seed
-        """
 
-        super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
+class OMP_Augmented(AtomBaggingBase):
+    def __init__(
+        self,
+        K=10,
+        atom_bag_percent=1,
+        select_atom_percent=0,
+        random_seed=0,
+        ignore_warning=False
+    ):
+        self.K = K
+        self.random_seed = random_seed
+        self.ignore_warning = ignore_warning
+
+        self.select_atom_percent = np.max([0, np.min([1, select_atom_percent])])
+        self.atom_weak_select_flag = select_atom_percent > 0
+        self.atom_bag_percent = np.max([0, np.min([1, atom_bag_percent])])
+
+
+        self.indices = []
+        self.s = None
+        self.phi = None
+        self.a = None
+        self.coefficients = None
+        self.r = None
+        self.coefficients_matrix_per_k = None
+
 
     def fit(self, phi, s):
         """
@@ -165,7 +181,6 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         phi (numpy.ndarray): Dictionary
         """
         self.reset()
-
         if s.ndim == 1:
             self.s = s.reshape(-1, 1)
         else:
@@ -175,71 +190,11 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         self.coefficients = np.zeros(phi.shape[1])
         self.r = self.s.copy()
 
+        self.coefficients_matrix_per_k = np.zeros((phi.shape[1], self.K))
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
         for i in range(self.K):
-            inner_products = (phi.T @ self.r).flatten()
-            if self.atom_bag_flag:
-                dropping_indices = np.random.choice(
-                    phi.shape[1],
-                    int(phi.shape[1] * (1 - self.atom_bag_percent)),
-                    replace=False,
-                )
-                inner_products[dropping_indices] = 0
-            if self.atom_weak_select_flag:
-                top_ind = np.argsort(np.abs(inner_products))[::-1][
-                    : int(phi.shape[1] * self.select_atom_percent)
-                ]
-                # randomly select one atom
-                lambda_k = np.random.choice(top_ind)
-            else:
-                lambda_k = np.argmax(np.abs(inner_products))
-            self.indices.append(lambda_k)
-            self.coefficients[lambda_k] = (
-                self.coefficients[lambda_k] + inner_products[lambda_k]
-            )
-            self.a += inner_products[lambda_k] * phi[:, lambda_k].reshape(-1, 1)
-            self.r = self.s - self.a
-        return self.a, self.coefficients
-
-
-class OMP_Augmented(AtomBaggingBase):
-    def __init__(
-        self, K_lst=list(range(1,21,1)), select_atom_percent=0, random_seed=None, ignore_warning=False
-    ):
-        self.K_lst = K_lst
-        self.random_seed = random_seed
-        self.select_atom_percent = select_atom_percent
-        if select_atom_percent == 0:
-            self.atom_weak_select_flag = False
-
-        self.indices = []
-        self.coefficients = None
-        self.ignore_warning = ignore_warning
-
-        self.coefficients_matrix = None
-        self.error_series = []
-
-    def fit(self, phi, s):
-        """
-        Args:
-        s (numpy.ndarray): Input signal
-        phi (numpy.ndarray): Dictionary
-        """
-        self.reset()
-        self.s = s
-        self.phi = phi
-        self.a = np.zeros_like(self.s)
-        self.coefficients = np.zeros(phi.shape[1])
-        self.r = self.s.copy()
-
-        self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
-        self.error_series = np.zeros(len(self.K_lst))
-        if self.random_seed is not None:
-            np.random.seed(self.random_seed)
-
-        for k in range(np.max(self.K_lst)):
             inner_products = (phi.T @ self.r).flatten()
             # so that we will not select the same atom
             inner_products[self.indices] = 0
@@ -262,67 +217,30 @@ class OMP_Augmented(AtomBaggingBase):
                     print("Singular matrix encountered in OMP")
                 break
 
-            # Update indices
-            self.indices.append(lambda_k)
-
-
-            ## FIXME:: Lazy David found that you can skip determining the optimal k and calculate the error with the whole matrix with the right indexing
-            # Update Coefficients
-            temp_coefficients_vector = np.zeros(phi.shape[1])
-            temp_coefficients_vector[self.indices] = betas.flatten()
-            temp_projection_vector = phi @ temp_coefficients_vector
-            temp_residual_vector = self.s - temp_projection_vector
-
-            if (k+1) in self.K_lst:
-                self.coefficients_matrix[:, self.K_lst.index(k+1)] = temp_coefficients_vector
-                self.error_series[self.K_lst.index(k+1)] = np.mean(temp_residual_vector**2)
-
-        minimal_k_index = np.argmin(self.error_series)
-
-        self.optimal_k = self.K_lst[minimal_k_index]
-
-        # Update Coefficients
-
-        self.coefficients = self.coefficients_matrix[:, minimal_k_index]
+        self.coefficients = betas.flatten()
 
         # Update Projection
-        self.a = phi @ self.coefficients
+        self.a = self.predict(self.phi)
 
         # Update Residual
         self.r = self.s - self.a
 
         return self.a, self.coefficients
 
-    def multi_score(self, phi_test, s_test):
-        """
-        Args:
-        phi_test (numpy.ndarray): Test data
-        s_test (numpy.ndarray): Test labels
-
-        Returns:
-        numpy.ndarray: Predicted output
-        """
-
-        test_score = []
-        projection_matrix = phi_test @ self.coefficients_matrix
-        residual_matrix = s_test.reshape(-1, 1) - projection_matrix
-        test_score = np.mean(residual_matrix**2, axis=0)
-        return test_score
-
     def reset(self):
         super().reset()
-        self.coefficients_matrix = None
+        self.coefficients_matrix_per_k = None
         self.error_series = []
 
-    def set_K_lst(self, K_lst):
-        self.K_lst = K_lst
+    def set_K(self, K):
+        self.K = K
 
 
 class BOMP(AtomBaggingBase):
     def __init__(
         self,
-        Bag_lst= list(range(1,11)),
-        K_lst = list(range(1, 11)),
+        N_bag = 10,
+        K = 10,
         signal_bag_percent=0.7,
         atom_bag_percent=1,
         select_atom_percent=0,
@@ -343,8 +261,8 @@ class BOMP(AtomBaggingBase):
         random_seed (int): Random seed
         """
 
-        self.Bag_lst = Bag_lst
-        self.K_lst = K_lst
+        self.N_bag = N_bag
+        self.K = K
         self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
         self.select_atom_percent = select_atom_percent
@@ -355,43 +273,62 @@ class BOMP(AtomBaggingBase):
         self.s = None
         self.phi = None
         self.tmpPursuitModel = OMP_Augmented(
-            K_lst, select_atom_percent, random_seed, ignore_warning
+            self.K,
+            self.atom_bag_percent,
+            self.select_atom_percent,
+            self.replace_flag,
         )
         self.SignalBagging = None
         self.coefficients = None
+        self.coefficients_matrix_per_bag = None
         self.a = None
 
-    def agg_weight_with_error(self, c_lst, mse_lst):
+
+
+    def agg_weight_with_error(self, coefficients_matrix, error_series):
         """
         This function is used to aggregate the coefficients with the inverse of the mean squared error
 
         Args:
-        c_lst (list): List of coefficients
-        mse_lst (list): List of mean squared errors
+        coefficients_matrix (numpy.ndarray): Matrix of coefficients
+        error_series (numpy.ndarray): Error series
         """
         # Calculate the weight
-        mse_lst = np.array(mse_lst)
-        weight = 1 / mse_lst
+
+        weight = 1 / error_series
         weight = weight / np.sum(weight)
 
         # Calculate the weighted average
-        tot = np.zeros_like(c_lst[0])
-        for i in range(len(c_lst)):
-            tot += c_lst[i] * weight[i]
-        return tot
 
-    def agg_weight_with_avg(self, c_lst):
+        return coefficients_matrix @ weight
+
+
+    def agg_weight_with_avg(self, coefficients_matrix):
         """
-        This function is used to aggregate the coefficients with the inverse of the mean squared error
+        This function is used to aggregate the coefficients with the average of the coefficients
 
         Args:
-        c_lst (list): List of coefficients
+        coefficients_matrix (numpy.ndarray): Matrix of coefficients
         """
-        # Calculate the weighted average
-        tot = np.zeros_like(c_lst[0])
-        for i in range(len(c_lst)):
-            tot += c_lst[i]
-        return tot / len(c_lst)
+
+        # Calculate the average
+
+        return np.mean(coefficients_matrix, axis=1)
+    
+    def agg_weight_with_count(self, coefficients_matrix, col_idx_bag):
+
+        counted_array = np.array(
+            np.unique(np.concatenate(col_idx_bag), return_counts=True)
+        )
+        temp_coefficients_matrix = self.coefficients_cubic.sum(axis=0)
+        counted_array = counted_array[:,np.argsort(counted_array[0])]
+        if (counted_array.shape[1] < self.phi.shape[1]):
+            self.coefficients_matrix_per_bag[counted_array[0, :], :] = ((temp_coefficients_matrix[counted_array[0, :], :]).T/ counted_array[1, :]).T
+        else:
+            self.coefficients_matrix_per_bag = ((temp_coefficients_matrix).T/ counted_array[1, :]).T
+
+        raise NotImplementedError
+        pass # TODO
 
     def fit(self, phi, s):
         """
@@ -401,119 +338,113 @@ class BOMP(AtomBaggingBase):
         """
 
         self.reset()
-
-        self.s = s
-        self.phi = phi
-        self.SignalBagging = SignalAtomBagging(
-            np.max(self.Bag_lst),
-            self.signal_bag_percent,
-            self.atom_bag_percent,
-            self.replace_flag,
-            self.random_seed,
-        )
-        self.SignalBagging.fit(self.phi, self.s)
-        self.coefficients_matrix = None
-        s_bag = self.SignalBagging.s_bag
-        phi_bag = self.SignalBagging.phi_bag
-        col_idx_bag = self.SignalBagging.col_idx_bag
-        self.coefficients_cubic = np.zeros((np.max(self.Bag_lst), phi.shape[1], len(self.K_lst)))
-        self.coefficients_matrix = np.zeros((phi.shape[1], len(self.K_lst)))
-        self.bag_k_error_matrix = np.zeros((len(self.Bag_lst)*len(self.K_lst), 3))
-
-
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
-        for i in range(np.max(self.Bag_lst)):
-            sub_s = s_bag[i]
-            sub_phi = phi_bag[i]
-            sub_idx = col_idx_bag[i]
-            self.tmpPursuitModel = OMP_Augmented(
-                self.K_lst,
-                self.select_atom_percent,
-                np.random.randint(10 * np.max(self.Bag_lst)),
-                self.ignore_warning,
-            )
-            self.tmpPursuitModel.fit(sub_phi, sub_s)
-            real_sub_coefficients = np.zeros((phi.shape[1], len(self.K_lst)))
-            real_sub_coefficients[sub_idx, :] = self.tmpPursuitModel.coefficients_matrix
-            self.coefficients_cubic[i,:,:] = real_sub_coefficients
-            self.tmpPursuitModel.reset()
-            if (i+1) in self.Bag_lst:
-                counted_array = np.array(
-                    np.unique(np.concatenate(col_idx_bag[: i + 1]), return_counts=True)
-                )
-                temp_coefficients_matrix = self.coefficients_cubic.sum(axis=0)
-                counted_array = counted_array[:,np.argsort(counted_array[0])]
-                filled_array = np.zeros_like(phi[0])
-
-                if (counted_array.shape[1] < phi.shape[1]):
-                    temp_coefficients_matrix[counted_array[0, :], :] = ((temp_coefficients_matrix[counted_array[0, :], :]).T/ counted_array[1, :]).T
-                else:
-                    temp_coefficients_matrix = ((temp_coefficients_matrix).T/ counted_array[1, :]).T
-                temp_projection_matrix = phi @ temp_coefficients_matrix
-                temp_residual_matrix = s.reshape(-1, 1) - temp_projection_matrix
-                temp_error_series = np.mean(temp_residual_matrix ** 2, axis=0)
-                bag_idx = self.Bag_lst.index(i+1)
-                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 0] = i+1
-                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 1] = self.K_lst
-                self.bag_k_error_matrix[bag_idx*len(self.K_lst):(bag_idx+1)*len(self.K_lst), 2] = temp_error_series
-
-        self.optimal_idx = np.argmin(self.bag_k_error_matrix[:, 2])
-
-        self.optimal_k = int(self.bag_k_error_matrix[self.optimal_idx, 1])
-
-        self.optimal_bag = int(self.bag_k_error_matrix[self.optimal_idx, 0])
-
-        # print(self.bag_k_error_matrix)
-        counted_array = np.array(
-            np.unique(np.concatenate(col_idx_bag[: self.optimal_bag]), return_counts=True)
+        self.s = s
+        self.phi = phi
+        self.SignalBagging = SignalBagging(
+            self.N_bag,
+            self.signal_bag_percent,
+            self.replace_flag,
+            np.random.randint(10000),
         )
-        temp_coefficients_matrix = self.coefficients_cubic.sum(axis=0)
-        counted_array = counted_array[:,np.argsort(counted_array[0])]
-        filled_array = np.zeros_like(phi[0])
-        if (counted_array.shape[1] < phi.shape[1]):
-            self.coefficients_matrix[counted_array[0, :], :] = ((temp_coefficients_matrix[counted_array[0, :], :]).T/ counted_array[1, :]).T
-        else:
-            self.coefficients_matrix = ((temp_coefficients_matrix).T/ counted_array[1, :]).T
+        self.SignalBagging.fit(self.phi, self.s)
+        s_bag = self.SignalBagging.s_bag
+        phi_bag = self.SignalBagging.phi_bag
+        col_idx_bag = self.SignalBagging.col_idx_bag
+        self.coefficients_matrix_per_bag = np.zeros((phi.shape[1], self.N_bag))
+        self.error_series = np.zeros(self.N_bag)
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+        if self.agg_func != "weight":
+            for i in range(self.N_bag):
+                sub_s = s_bag[i]
+                sub_phi = phi_bag[i]
+                row_sub_idx = col_idx_bag[i]
+                self.tmpPursuitModel = OMP_Augmented(
+                    self.K,
+                    self.atom_bag_percent,
+                    self.select_atom_percent,
+                    np.random.randint(10000)
+                )
+                self.tmpPursuitModel.fit(sub_phi, sub_s)
+                sub_coefficients = self.tmpPursuitModel.coefficients
+                self.tmpPursuitModel.reset()
+                self.coefficients_matrix_per_bag[row_sub_idx, i] = sub_coefficients
 
-        self.coefficients = self.coefficients_matrix[:, self.K_lst.index(self.optimal_k)]
+            for i in range(self.N_bag):
+                sub_s = s_bag[i]
+                sub_phi = phi_bag[i]
+                row_sub_idx = col_idx_bag[i]
+                self.tmpPursuitModel = OMP_Augmented(
+                    self.K_lst,
+                    self.select_atom_percent,
+                    np.random.randint(10 * np.max(self.Bag_lst)),
+                    self.ignore_warning,
+                )
+                self.tmpPursuitModel.fit(sub_phi, sub_s)
+                sub_coefficients = self.tmpPursuitModel.coefficients
+                self.tmpPursuitModel.reset()
+                self.coefficients_matrix_per_bag[row_sub_idx, i] = sub_coefficients
+
+                # calculate self.error_series using oob samples
+                if self.signal_bag_percent < 1:
+                    row_oob_idx = np.setdiff1d(np.arange(self.s.shape[0]), row_sub_idx)
+                    phi_oob = phi[row_oob_idx, :]
+                    s_oob = s[row_oob_idx, :]
+                    oob_mse = np.mean((s_oob.ravel() - phi_oob @ sub_coefficients) ** 2)
+                    self.error_series[i] = oob_mse
+                else:
+                    self.error_series[i] = np.mean((self.s.ravel() - self.phi @ sub_coefficients) ** 2)
+
+
+        if self.agg_func == "weight":
+            self.coefficients = self.agg_weight_with_error(self.coefficients_matrix_per_bag, self.error_series)
+        elif self.agg_func == "count":
+            self.coefficients = self.agg_weight_with_count(self.coefficients_matrix_per_bag, col_idx_bag)
+        elif self.agg_func == "avg":
+            self.coefficients = self.agg_weight_with_avg(self.coefficients_matrix_per_bag, col_idx_bag)
+        else:
+            self.coefficients = self.agg_weight_with_count(self.coefficients_matrix_per_bag, col_idx_bag)
+
+
 
         # Update Projection
-        self.a = phi @ self.coefficients
+        self.a = self.predict(self.phi)
 
         # Update Residual
         self.r = self.s - self.a
-        return self.a, self.coefficients
+
 
     def reset(self):
         """
         This function is used to reset the model
         """
         super().reset()
-        self.coefficients_matrix = None
-        self.coefficients_cubic = None
-        self.error_series = []
+        self.coefficients_matrix_per_bag = None
+        self.error_series = None
         self.coefficients = None
         self.a = None
 
-    def set_Bag_lst(self, bag_lst):
+    def set_N_bag(self, N_bag):
         """
-        This function is used to set the bag_lst
+        This function is used to set the number of bags
+        """
+        self.N_bag = N_bag
 
-        Args:
-        bag_lst (list): List of bag size
-        """
-        self.Bag_lst = bag_lst
     
-    def set_K_lst(self, k_lst):
-        self.K_lst = k_lst
+    def set_K(self, K):
+        """
+        This function is used to set the number of atoms
+        """
+        self.K = K
 
     def get_params(self, deep=True):
     # This assumes all parameters are primitives
         return {
-            "Bag_lst": self.Bag_lst,
-            "K_lst": self.K_lst,
+            "N_bag": self.N_bag,
+            "K": self.K,
             "signal_bag_percent": self.signal_bag_percent,
             "atom_bag_percent": self.atom_bag_percent,
             "select_atom_percent": self.select_atom_percent,

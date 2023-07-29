@@ -349,6 +349,8 @@ class BMP(AtomBaggingBase):
         phi (numpy.ndarray): Dictionary
         """
         self.reset()
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
         self.coefficients_lst = []
         self.mse_lst = []
 
