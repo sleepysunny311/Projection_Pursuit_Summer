@@ -94,6 +94,15 @@ def get_model_params(config):
             fixed_params[param] = value
     param_grid['K'] = K_list
     return fixed_params, param_grid
+
+def myscores(estimator, X, y):
+    mse = estimator.score(X, y)
+    coefs = estimator.coefficients
+    ret_dict = {
+        f'beta_{i}': coef for i, coef in enumerate(coefs)
+    }
+    ret_dict['mse'] = mse
+    return ret_dict
     
 def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_params, param_grid, cv_num, trial_num):
     # get the model
@@ -133,9 +142,15 @@ def run_trials_npm_multi_noise_lvl(n, p, m, noise_level_lst, model_name, fixed_p
             lowest_cv_error = np.min(cv_err_lst)
             trials_loweset_cv_MSE_temp.append(lowest_cv_error)
             best_params = gs.best_params_
-            reslog_one_trial = {'noise_level': noise_level, 'trial': trial_id, 'cv_error_lst': cv_err_lst, 
-                            'lowest_cv_error': lowest_cv_error, 'best_params': best_params, 
-                            'param_lst': param_lst, 'training_error': training_error,'testing_error': testing_error}
+            reslog_one_trial = {'noise_level': noise_level, 'trial': trial_id, 'cv_res': cv_err_lst, 
+                            'lowest_cv_error': lowest_cv_error, 
+                            'best_params': best_params, 
+                            'param_lst': param_lst, 
+                            'training_error': training_error, 
+                            'testing_error': testing_error,
+                            'dataset': (X_train, X_test, y_train, y_test), 
+                            'best_estimator_coef_lst': best_estimator_coef_lst, 
+                            'best_estimator_coef': best_estimator_coef}
             res_log_npm['log'].append(reslog_one_trial)
             print("Trial: ", trial_id, " Best params: ", best_params, " Lowest CV Error: ", lowest_cv_error, " Training Error: ", training_error," Testing Error: ", testing_error)
         res_log_npm['noise_level_lowest_cv_MSE'].append(np.mean(trials_loweset_cv_MSE_temp))

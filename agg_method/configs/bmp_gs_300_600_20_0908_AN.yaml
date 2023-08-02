@@ -1,0 +1,20 @@
+TEST:
+  n: 300
+  p: 600
+  m: 20
+  noise_level: [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.22, 0.24, 0.26, 0.28, 0.3, 0.4, 0.5]
+  model: BMP
+  cv_num: 5
+  trial_num: 25
+MODEL:
+  N_bag: 500
+  signal_bag_percent: 0.9
+  atom_bag_percent: 0.8
+  select_atom_percent: 0
+  replace_flag: False
+  agg_func: 'weight'
+  K_start: 1
+  K_end: 101
+  K_step: 2
+  ignore_warning: True
+  random_seed: null
