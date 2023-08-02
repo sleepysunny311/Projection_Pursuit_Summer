@@ -74,4 +74,5 @@ sty/algorithms.py
 sty/data_generation.py
 sty/test.ipynb
 
-*/res/
+*.pkl
+**/*.pkl
