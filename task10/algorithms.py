@@ -399,3 +399,19 @@ class BMP(AtomBaggingBase):
         else:
             self.coefficients = self.agg_weight_with_avg(self.coefficients_lst)
         self.a = self.phi @ self.coefficients
+
+    def pred_corr(self, phi_test):
+        """
+        Args:
+        phi_test (numpy.ndarray): Test data
+
+        Returns:
+        float: Correlation coefficient of bagging models
+        """
+        pred_lst = []
+        for coeff in self.coefficients_lst:
+            pred_lst.append((phi_test @ coeff).reshape(-1, 1))
+        pred_mat = np.concatenate(pred_lst, axis=1)
+        pred_corr = np.corrcoef(pred_mat, rowvar=False)
+        pred_corr_utri = pred_corr[np.triu_indices(pred_corr.shape[0], k=1)]
+        return pred_corr_utri
