@@ -69,7 +69,6 @@ class AtomBaggingBase(BaseEstimator):
         self,
         K,
         atom_bag_percent=1,
-        discard_atom_percent = 0,
         select_atom_percent=0,
         random_seed=0,
         ignore_warning=False,
@@ -90,28 +89,23 @@ class AtomBaggingBase(BaseEstimator):
         self.select_atom_percent = np.max([0, np.min([1, select_atom_percent])])
         self.atom_weak_select_flag = select_atom_percent > 0
         self.atom_bag_percent = np.max([0, np.min([1, atom_bag_percent])])
-        self.discard_atom_percent = np.max([0, np.min([1, discard_atom_percent])])
 
-        self.indices = []
         self.s = None
         self.phi = None
         self.a = None
         self.coefficients = None
         self.r = None
-        self.discard_atom_indices = None
 
         self.random_seed = random_seed
         self.ignore_warning = ignore_warning
 
 
     def reset(self):
-        self.indices = []
         self.s = None
         self.phi = None
         self.a = None
         self.coefficients = None
         self.r = None
-        self.discard_atom_indices = None
 
     def fit(self, phi, s):
         return None
@@ -129,7 +123,7 @@ class AtomBaggingBase(BaseEstimator):
 
     def score(self, phi_test, s_test):
         # return self.coefficients
-        s_pred = (phi_test @ self.coefficients).reshape(-1, 1)
+        s_pred = self.predict(phi_test)
         pred_mse = np.mean((s_pred - s_test) ** 2)
         return pred_mse
 
@@ -141,7 +135,7 @@ class AtomBaggingBase(BaseEstimator):
 
 
 class AtomBaggingMatchingPursuit(AtomBaggingBase):
-    def __init__(self, K, atom_bag_percent=1, discard_atom_percent = 0, select_atom_percent=0, random_seed=None):
+    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0, random_seed=None):
         """
         This class is used to perform atom bagging with matching pursuit
 
@@ -152,7 +146,7 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         random_seed (int): Random seed
         """
 
-        super().__init__(K, atom_bag_percent, discard_atom_percent, select_atom_percent, random_seed)
+        super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
 
     def fit(self, phi, s):
         """
@@ -161,13 +155,6 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
         phi (numpy.ndarray): Dictionary
         """
         self.reset()
-        
-        random_discard_indices = np.random.choice(
-            phi.shape[1],
-            int(phi.shape[1] * self.discard_atom_percent),
-            replace=False,
-        )
-        rest_indices = np.setdiff1d(np.arange(phi.shape[1]), random_discard_indices)
 
         if s.ndim == 1:
             self.s = s.reshape(-1, 1)
@@ -183,16 +170,11 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
 
         for i in range(self.K):
             inner_products = (phi.T @ self.r).flatten()
-            #  set discarded atoms to 0
-            inner_products[random_discard_indices] = 0
-            
-            # randomly select another set of atoms to set to 0
             dropping_indices = np.random.choice(
-                rest_indices,
+                phi.shape[1],
                 int(phi.shape[1] * (1 - self.atom_bag_percent)),
                 replace=False,
             )
-            
             inner_products[dropping_indices] = 0
             if self.atom_weak_select_flag:
                 top_ind = np.argsort(np.abs(inner_products))[::-1][
@@ -202,12 +184,11 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
                 lambda_k = np.random.choice(top_ind)
             else:
                 lambda_k = np.argmax(np.abs(inner_products))
-            self.indices.append(lambda_k)
-            phi_lambda_norm_sq = np.linalg.norm(phi[:, lambda_k]) ** 2
+            lambda_k_coefficient_increment = inner_products[lambda_k] / ((phi[:, lambda_k] ** 2).sum())
             self.coefficients[lambda_k] = (
-                self.coefficients[lambda_k] + inner_products[lambda_k] / phi_lambda_norm_sq
+                self.coefficients[lambda_k] +  lambda_k_coefficient_increment
             )
-            self.a += (inner_products[lambda_k] / phi_lambda_norm_sq) * phi[:, lambda_k].reshape(-1, 1)
+            self.a += lambda_k_coefficient_increment * phi[:, lambda_k].reshape(-1, 1)
             self.r = self.s - self.a
         return self.a, self.coefficients
 
@@ -285,7 +266,6 @@ class BMP(AtomBaggingBase):
         K=10,
         signal_bag_percent=0.7,
         atom_bag_percent=1,
-        discard_atom_percent = 0,
         select_atom_percent=0,
         replace_flag=True,
         agg_func="weight",
@@ -307,7 +287,6 @@ class BMP(AtomBaggingBase):
         self.K = K
         self.signal_bag_percent = signal_bag_percent
         self.atom_bag_percent = atom_bag_percent
-        self.discard_atom_percent = discard_atom_percent
         self.select_atom_percent = select_atom_percent
         self.replace_flag = replace_flag
         self.agg_func = agg_func
@@ -318,7 +297,6 @@ class BMP(AtomBaggingBase):
         self.tmpPursuitModel = AtomBaggingMatchingPursuit(
             self.K,
             self.atom_bag_percent,
-            self.discard_atom_percent,
             self.select_atom_percent,
             self.random_seed
         )
@@ -361,23 +339,6 @@ class BMP(AtomBaggingBase):
             tot += c_lst[i]
         return tot / len(c_lst)
 
-    def agg_weight_with_imp(self, c_lst):
-        # take average over the non-zero coefficients
-        final_coefficients = np.zeros_like(c_lst[0])
-        coef_len = len(c_lst[0])
-        for i in range(coef_len):
-            non_zero_count = 0
-            for c in c_lst:
-                if c[i] != 0:
-                    final_coefficients[i] += c[i]
-                    non_zero_count += 1
-            if non_zero_count != 0:
-                final_coefficients[i] /= non_zero_count
-            else:
-                final_coefficients[i] = 0
-        return final_coefficients
-        
-    
     def fit(self, phi, s):
         """
         Args:
@@ -385,6 +346,12 @@ class BMP(AtomBaggingBase):
         phi (numpy.ndarray): Dictionary
         """
         self.reset()
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+        else:
+            np.random.seed(0)
+
         self.coefficients_lst = []
         self.mse_lst = []
 
@@ -410,9 +377,8 @@ class BMP(AtomBaggingBase):
             self.tmpPursuitModel = AtomBaggingMatchingPursuit(
                 self.K,
                 self.atom_bag_percent,
-                self.discard_atom_percent,
                 self.select_atom_percent,
-                None
+                np.random.randint(0, 100000)
             )
             self.tmpPursuitModel.fit(sub_phi, sub_s)
             sub_coefficients = self.tmpPursuitModel.coefficients
@@ -430,9 +396,22 @@ class BMP(AtomBaggingBase):
 
         if self.agg_func == "weight":
             self.coefficients = self.agg_weight_with_error(self.coefficients_lst, self.mse_lst)
-        elif self.agg_func == "avg":
+        else:
             self.coefficients = self.agg_weight_with_avg(self.coefficients_lst)
-        elif self.agg_func == "imp":
-            self.coefficients = self.agg_weight_with_imp(self.coefficients_lst)
-        
         self.a = self.phi @ self.coefficients
+
+    def pred_corr(self, phi_test):
+        """
+        Args:
+        phi_test (numpy.ndarray): Test data
+
+        Returns:
+        float: Correlation coefficient of bagging models
+        """
+        pred_lst = []
+        for coeff in self.coefficients_lst:
+            pred_lst.append((phi_test @ coeff).reshape(-1, 1))
+        pred_mat = np.concatenate(pred_lst, axis=1)
+        pred_corr = np.corrcoef(pred_mat, rowvar=False)
+        pred_corr_utri = pred_corr[np.triu_indices(pred_corr.shape[0], k=1)]
+        return pred_corr_utri
