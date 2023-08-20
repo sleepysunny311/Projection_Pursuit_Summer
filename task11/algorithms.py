@@ -1,7 +1,26 @@
 import numpy as np
+from scipy.optimize import minimize
 from sklearn.base import BaseEstimator
 
 # This file contains classes for different pursuit algorithms
+
+
+def lasso_objective(beta, X, y, lambda_, weights):
+    """
+    Args:
+    beta (numpy.ndarray): Coefficients
+    X (numpy.ndarray): Input data
+    y (numpy.ndarray): Output data
+    lambda_ (float): Regularization parameter
+    weights (numpy.ndarray): Weights of the betas
+
+    Returns:
+    float: Objective function value
+    """
+    return (
+        np.mean((y - X @ beta) ** 2) + lambda_ * np.sum(np.abs(beta) * weights)
+    )
+
 
 
 class SignalBagging:
@@ -191,6 +210,83 @@ class AtomBaggingMatchingPursuit(AtomBaggingBase):
             self.a += lambda_k_coefficient_increment * phi[:, lambda_k].reshape(-1, 1)
             self.r = self.s - self.a
         return self.a, self.coefficients
+
+
+
+class AtomBaggingOrthgonalRandomMatchingPursuit(AtomBaggingBase):
+    def __init__(self, K, atom_bag_percent=1, select_atom_percent=0,Lambda = 1,alpha = 0.9, random_seed=None):
+        """
+        This class is used to perform atom bagging with matching pursuit
+
+        Args:
+        K (int): Number of iterations
+        atom_bag_percent (float): Percentage of the original dictionary
+        select_atom_percent (float): Percentage of the selected atoms
+        random_seed (int): Random seed
+        """
+
+        super().__init__(K, atom_bag_percent, select_atom_percent, random_seed)
+        self.Lambda = Lambda
+        self.alpha = alpha
+
+    def fit(self, phi, s):
+        """
+        Args:
+        s (numpy.ndarray): Input signal
+        phi (numpy.ndarray): Dictionary
+        """
+        self.reset()
+
+        if s.ndim == 1:
+            self.s = s.reshape(-1, 1)
+        else:
+            self.s = s
+        self.phi = phi
+        self.a = np.zeros_like(self.s)
+        self.coefficients = np.zeros(phi.shape[1])
+        self.r = self.s.copy()
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+
+        for i in range(self.K):
+            inner_products = (phi.T @ self.r).flatten()
+            dropping_indices = np.random.choice(
+                phi.shape[1],
+                int(phi.shape[1] * (1 - self.atom_bag_percent)),
+                replace=False,
+            )
+            inner_products[dropping_indices] = 0
+            if self.atom_weak_select_flag:
+                top_ind = np.argsort(np.abs(inner_products))[::-1][
+                    : int(phi.shape[1] * self.select_atom_percent)
+                ]
+                # randomly select one atom
+                lambda_k = np.random.choice(top_ind)
+            else:
+                lambda_k = np.argmax(np.abs(inner_products))
+
+            # Ordinary least squares
+            X = phi[:, self.indices + [lambda_k]]
+
+            result = minimize(fun=lasso_objective, x0=np.zeros(X.shape[1]), args=(X, self.s, self.Lambda, np.random.uniform(1, 1/self.alpha, X.shape[1])), method='L-BFGS-B')
+
+            # Update indices
+            self.indices.append(lambda_k)
+
+        # Update Coefficients
+        self.coefficients = np.zeros(phi.shape[1])
+        self.coefficients[self.indices] = result.x.flatten()
+
+        # Update Projection
+        self.a = self.predict(self.phi)
+
+        # Update residual
+        self.r = self.s - self.a
+        return self.a, self.coefficients
+
+
+
 
 
 # class OMP_Augmented(AtomBaggingBase):
