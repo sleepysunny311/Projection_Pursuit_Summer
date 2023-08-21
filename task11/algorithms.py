@@ -21,7 +21,22 @@ def lasso_objective(beta, X, y, lambda_, weights):
         np.mean((y - X @ beta) ** 2) + lambda_ * np.sum(np.abs(beta) * weights)
     )
 
+def BIC_objective(Lambda, X, y, coefficient_lst):
+    """
+    Args:
+    beta (numpy.ndarray): Coefficients
+    X (numpy.ndarray): Input data
+    y (numpy.ndarray): Output data
+    lambda_ (float): Regularization parameter
+    weights (numpy.ndarray): Weights of the betas
 
+    Returns:
+    float: Objective function value
+    """
+    coefficient_matrix = np.vstack(coefficient_lst)
+    aggregated_coefficients = coefficient_matrix @ Lambda
+    penalty = 2 * np.sqrt(2) * np.sqrt(np.log(coefficient_matrix.shape[1]*X.shape[0])/X.shape[0])*np.linalg.norm(aggregated_coefficients, ord=1)
+    return np.mean((y - X @ aggregated_coefficients)**2) + penalty
 
 class SignalBagging:
     def __init__(
@@ -492,6 +507,9 @@ class BMP(AtomBaggingBase):
 
         if self.agg_func == "weight":
             self.coefficients = self.agg_weight_with_error(self.coefficients_lst, self.mse_lst)
+        elif self.agg_func == "BIC":
+            result = minimize(BIC_objective, x0=np.ones(len(self.coefficients_lst))/len(self.coefficients_lst), args=(self.phi, self.s, self.coefficients_lst), method='L-BFGS-B')
+            self.coefficients = result.x
         else:
             self.coefficients = self.agg_weight_with_avg(self.coefficients_lst)
         self.a = self.phi @ self.coefficients
